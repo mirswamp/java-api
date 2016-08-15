@@ -1,5 +1,6 @@
 package edu.uiuc.ncsa.swamp.session.handlers;
 
+import edu.uiuc.ncsa.swamp.api.Project;
 import edu.uiuc.ncsa.swamp.api.Tool;
 import edu.uiuc.ncsa.swamp.session.MyResponse;
 import edu.uiuc.ncsa.swamp.session.Session;
@@ -34,6 +35,23 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
     @Override
     public List<T> getAll() {
         String x = createURL("tools/public");
+        MyResponse mr = getClient().rawGet(x, null);
+        ArrayList<T> tools = new ArrayList<>();
+        if(mr.jsonArray == null){
+            return tools;
+        }
+        for (int i = 0; i < mr.jsonArray.size(); i++) {
+            JSONObject json = mr.jsonArray.getJSONObject(i);
+            tools.add(fromJSON(json));
+        }
+        return tools;
+    }
+
+    /*
+     * Gets Private Tools for the Project
+     */
+    public List<T> getAll(Project project) {
+        String x = createURL("tools/protected/" + project.getUUIDString());
         MyResponse mr = getClient().rawGet(x, null);
         ArrayList<T> tools = new ArrayList<>();
         if(mr.jsonArray == null){

@@ -101,7 +101,7 @@ public class Tool extends SwampThing{
     		return null;
     	}
     }
-
+    
     public List<String> getSupportedPlatforms(){
     	if (this.getConversionMap().get(PLATFORM_NAMES) instanceof JSONArray) {
     		return (List<String>)this.getConversionMap().get(PLATFORM_NAMES);
@@ -109,7 +109,7 @@ public class Tool extends SwampThing{
     		return null;
     	}
     }
-
+    
     @Override
     public String toString() {
         return "Tool[uuid=" + getIdentifier() + ", name=" + getName() + ", sharing status=" + getToolSharingStatus() + ", create date=" + getCreateDate() + "]";

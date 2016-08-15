@@ -84,7 +84,7 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         parameters.put("package_version_uuid", pkg_ver.getUUIDString());
         parameters.put(PACKAGE_UUID_KEY, pkg_ver.getPackageThing().getUUIDString());
         parameters.put(PLATFORM_UUID_KEY, platform.getUUIDString());
-        parameters.put(TOOL_UUID_KEY, tool.getUUIDString());
+        parameters.put(TOOL_UUID_KEY, tool.getUUIDString()); 
         //parameters.put("tool_version_uuid", tool.getUUIDString());
         MyResponse myResponse = getClient().rawPost(url, parameters);
         AssessmentRun result = fromJSON(myResponse.json);

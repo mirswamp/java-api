@@ -1,5 +1,6 @@
 package edu.uiuc.ncsa.swamp.session.handlers;
 
+import edu.uiuc.ncsa.swamp.api.PackageThing;
 import edu.uiuc.ncsa.swamp.api.Project;
 import edu.uiuc.ncsa.swamp.api.Tool;
 import edu.uiuc.ncsa.swamp.session.MyResponse;
@@ -8,6 +9,7 @@ import edu.uiuc.ncsa.swamp.session.util.ConversionMapImpl;
 import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,8 +36,8 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
 
     @Override
     public List<T> getAll() {
-        String x = createURL("tools/public");
-        MyResponse mr = getClient().rawGet(x, null);
+        String url = createURL("tools/public");
+        MyResponse mr = getClient().rawGet(url, null);
         ArrayList<T> tools = new ArrayList<>();
         if(mr.jsonArray == null){
             return tools;
@@ -51,8 +53,8 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
      * Gets Private Tools for the Project
      */
     public List<T> getAll(Project project) {
-        String x = createURL("tools/protected/" + project.getUUIDString());
-        MyResponse mr = getClient().rawGet(x, null);
+        String url = createURL("tools/protected/" + project.getUUIDString());
+        MyResponse mr = getClient().rawGet(url, null);
         ArrayList<T> tools = new ArrayList<>();
         if(mr.jsonArray == null){
             return tools;
@@ -64,6 +66,19 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
         return tools;
     }
 
+    public boolean hasPermission(Tool tool, Project project, PackageThing package_thing) {
+    	String url = createURL("tools/" + tool.getUUIDString() + "/permission");
+    	HashMap<String, Object> map = new <String, Object>HashMap();
+    	map.put("package_uuid", package_thing.getUUIDString());
+    	map.put("project_uid", project.getUUIDString());
+        MyResponse mr = getClient().rawPost(url, map);
+        if(mr.jsonArray == null){
+            return false;
+        }else{
+        	return mr.jsonArray.getString(0).equals("granted");
+        }
+    }
+    
     protected T fromJSON(JSONObject json) {
         T tool = (T) new Tool(getSession());
         ConversionMapImpl map = new ConversionMapImpl();

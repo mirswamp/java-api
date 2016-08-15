@@ -210,6 +210,12 @@ public abstract class AbstractHandler<T extends SwampThing> {
         return p;
     }
 
+    public SwampThing create(JSONObject map) {
+        MyResponse mr = getClient().rawPost(getURL(), map);
+        SwampThing p = fromJSON(mr.json);
+        return p;
+    }
+
     protected JSONObject mapToJSON(ConversionMapImpl map) {
         JSONObject jsonObject = new JSONObject();
         for (String key : map.keySet()) {

@@ -1,6 +1,7 @@
 package edu.uiuc.ncsa.swamp.session.handlers;
 
 import edu.uiuc.ncsa.swamp.api.PackageThing;
+import edu.uiuc.ncsa.swamp.api.Project;
 import edu.uiuc.ncsa.swamp.session.MyResponse;
 import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.util.ConversionMapImpl;
@@ -9,6 +10,8 @@ import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.HttpStatus;
 
 /**
  * <p>Created by Jeff Gaynor<br>
@@ -81,7 +84,6 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         String[] bAttrib = {IS_OWNED_KEY};
         String[] dAttrib = {CREATE_DATE_KEY, UPDATE_DATE_KEY};
         String[] aAttrib = {VERSION_STRINGS};
-
         setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
         setAttributes(map, bAttrib, json, DATA_TYPE_BOOLEAN);
@@ -108,6 +110,24 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         return pkgs;
     }
 
+    public List<T> getAll(Project project) {
+        MyResponse mr = null;
+        mr = getClient().rawGet(createURL("packages/protected/"+ project.getUUIDString()), null);
+        ArrayList<T> pkgs = new ArrayList<>();
+        // For packages, the first call gets all the packages and individual calls to a specific url get
+        // the rest of the information.
+        for (int i = 0; i < mr.jsonArray.size(); i++) {
+            JSONObject json = mr.jsonArray.getJSONObject(i);
+            String uuid = json.getString(PACKAGE_UUID_KEY);
+            String url = createURL("packages/" + uuid);
+            MyResponse mr2 = getClient().rawGet(url, null);
+
+            pkgs.add(fromJSON(mr2.json));
+        }
+        return pkgs;
+    }
+
+    
     @Override
     public String getURL() {
         return createURL("packages");
@@ -119,7 +139,17 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         MyResponse mr = getClient().rawGet(url, null);
         DebugUtil.say(this, ".getTypes = " + mr.json);
         DebugUtil.say(this, ".getTypes = " + mr.jsonArray);
-
-
+    }
+    
+    public boolean deletePackage(PackageThing pkg) {
+    	MyResponse mr = null;
+    	mr = getClient().delete(getURL() + "/" + pkg.getUUIDString());
+    	//if (mr.getHttpResponseCode() == HttpStatus.SC_OK) {
+    	// This is incorrect, the setHttpResponseCode is not called to set the actual error 
+    	if (mr.getHttpResponseCode() == 0) {
+    		return true;
+    	}else {
+    		return false;
+    	}
     }
 }

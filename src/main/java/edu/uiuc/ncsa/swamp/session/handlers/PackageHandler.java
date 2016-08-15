@@ -134,11 +134,12 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
     }
 
 
-    public void getTypes() {
+    public List<String> getTypes() {
         String url = createURL("packages/types");
         MyResponse mr = getClient().rawGet(url, null);
-        DebugUtil.say(this, ".getTypes = " + mr.json);
-        DebugUtil.say(this, ".getTypes = " + mr.jsonArray);
+        // DebugUtil.say(this, ".getTypes = " + mr.json);
+        // DebugUtil.say(this, ".getTypes = " + mr.jsonArray);
+        return mr.jsonArray;
     }
     
     public boolean deletePackage(PackageThing pkg) {

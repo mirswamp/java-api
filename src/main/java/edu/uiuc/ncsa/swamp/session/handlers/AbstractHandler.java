@@ -133,7 +133,8 @@ public abstract class AbstractHandler<T extends SwampThing> {
                         map.put(key, Dates.toSWAMPDate(json, key));
                         break;
                     case DATA_TYPE_ARRAY:
-                        map.put(key, json.getJSONArray(key).toString(0));
+                        //map.put(key, json.getJSONArray(key).toString(0));
+                    	map.put(key, json.getJSONArray(key));
                         break;
                     case DATA_TYPE_STRING:
                     default:

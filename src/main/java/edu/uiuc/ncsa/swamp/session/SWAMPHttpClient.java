@@ -366,13 +366,13 @@ public class SWAMPHttpClient implements Serializable {
             setHeaders(post);
             try {
                 if (map instanceof JSONObject) {
-
+                	
                     //DebugUtil.say(this, ".makeRequest: got to json");
-
+                    
                 	JSONObject json = (JSONObject) map;
-
+                    
                 	//DebugUtil.say(this, ".makeRequest: json=" + json);
-
+                    
                 	StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                     entity.setContentType("application/json");
                     post.setEntity(entity);

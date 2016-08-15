@@ -1,8 +1,10 @@
 package edu.uiuc.ncsa.swamp.api;
 
 import edu.uiuc.ncsa.swamp.session.Session;
+import net.sf.json.JSONArray;
 
 import java.util.Date;
+import java.util.List;
 
 import static edu.uiuc.ncsa.swamp.session.handlers.ToolHandler.*;
 
@@ -90,6 +92,22 @@ public class Tool extends SwampThing{
     }
     public void setOwned(boolean isOwned){
         put(IS_OWNED_KEY, isOwned);
+    }
+
+    public List<String> getSupportedPkgTypes(){
+    	if (this.getConversionMap().get(PACKAGE_TYPE_NAMES) instanceof JSONArray) {
+    		return (List<String>)this.getConversionMap().get(PACKAGE_TYPE_NAMES);
+    	}else{
+    		return null;
+    	}
+    }
+
+    public List<String> getSupportedPlatforms(){
+    	if (this.getConversionMap().get(PLATFORM_NAMES) instanceof JSONArray) {
+    		return (List<String>)this.getConversionMap().get(PLATFORM_NAMES);
+    	}else{
+    		return null;
+    	}
     }
 
     @Override

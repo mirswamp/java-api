@@ -76,11 +76,11 @@ public class RunRequestHandler<T extends RunRequest> extends AbstractHandler<Run
         }
         parameters.put("assessment-run-uuids[]", aRun.getUUIDString());
         MyResponse myResponse = getClient().rawPost(url, parameters);
-
+        
         //System.out.println(myResponse);
-
+        
         if (myResponse.jsonArray != null){
-        	return true;
+        	return true;	
         }else {
         	return false;
         }

@@ -27,7 +27,9 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
     public static final String UPDATE_DATE_KEY = "update_date";
     public static final String IS_OWNED_KEY = "is_owned";
     public static final String POLICY_KEY = "policy";
-
+    public static final String PACKAGE_TYPE_NAMES = "package_type_names";
+    public static final String PLATFORM_NAMES = "platform_names";
+    
 
     @Override
     public List<T> getAll() {
@@ -51,10 +53,14 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
         String[] uAttrib = {TOOL_UUID_KEY};
         String[] dAttrib = {CREATE_DATE_KEY,UPDATE_DATE_KEY};
         String[] bAttrib = {IS_BUILD_NEEDED_KEY,IS_OWNED_KEY};
+        String[] aAttrib = {PACKAGE_TYPE_NAMES, PLATFORM_NAMES};
+        
         setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
         setAttributes(map, dAttrib, json, DATA_TYPE_DATE);
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
         setAttributes(map, bAttrib, json, DATA_TYPE_BOOLEAN);
+        setAttributes(map, aAttrib, json, DATA_TYPE_ARRAY);
+        
 /*
         tool.setUUID(UUID.fromString(json.getString(TOOL_UUID_KEY)));
         tool.setName(json.getString(NAME_KEY));

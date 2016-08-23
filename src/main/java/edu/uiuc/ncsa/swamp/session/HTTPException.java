@@ -7,8 +7,16 @@ package edu.uiuc.ncsa.swamp.session;
 public class HTTPException extends RuntimeException {
     int statusCode;
 
-    public HTTPException(String message, int statusCode) {
+    public int getStatusCode() {
+		return statusCode;
+	}
+
+	protected void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
+
+	public HTTPException(String message, int statusCode) {
         super(message);
-        this.statusCode = statusCode;
+        setStatusCode(statusCode);
     }
 }

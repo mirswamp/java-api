@@ -183,9 +183,10 @@ public class HandlerFactory {
         this.runRequestScheduleHandler = runRequestScheduleHandler;
     }
 
+    
     AssessmentRecordHandler<? extends AssessmentRecord> assessmentRecordHandler;
-
-    public AssessmentRecordHandler<? extends AssessmentRecord> getAssessmentRecordHandler() {
+    
+    public AssessmentRecordHandler<? extends AssessmentRecord> getassessmentRecordHandler() {
          if(assessmentRecordHandler == null){
         	 assessmentRecordHandler = new AssessmentRecordHandler<>(getCSASession());
          }

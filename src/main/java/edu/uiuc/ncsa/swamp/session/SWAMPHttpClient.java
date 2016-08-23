@@ -366,13 +366,13 @@ public class SWAMPHttpClient implements Serializable {
             setHeaders(post);
             try {
                 if (map instanceof JSONObject) {
-
+                	
                     //DebugUtil.say(this, ".makeRequest: got to json");
-
+                    
                 	JSONObject json = (JSONObject) map;
-
+                    
                 	//DebugUtil.say(this, ".makeRequest: json=" + json);
-
+                    
                 	StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                     entity.setContentType("application/json");
                     post.setEntity(entity);
@@ -419,7 +419,7 @@ public class SWAMPHttpClient implements Serializable {
                 System.out.println("Error connecting to " + url);
                 throw xx;
             } catch (Throwable t) {     // TODO: do not catch Throwable
-                t.printStackTrace();    // TODO: do not print strack trace
+                // t.printStackTrace();    // TODO: do not print strack trace
                 throw new GeneralException("Error contacting server", t);
             }
             // TODO: what if the repsonse is null
@@ -436,7 +436,7 @@ public class SWAMPHttpClient implements Serializable {
             return new MyResponse(toJSON(x0), getContext().getCookieStore().getCookies());
         } catch (IOException e) {
             releaseConnection(client, response);
-            e.printStackTrace();      //TODO: do not print stack trace
+            // e.printStackTrace();      //TODO: do not print stack trace
             throw new GeneralException("Error invoking http client", e);
         }
     }

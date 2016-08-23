@@ -133,7 +133,8 @@ public abstract class AbstractHandler<T extends SwampThing> {
                         map.put(key, Dates.toSWAMPDate(json, key));
                         break;
                     case DATA_TYPE_ARRAY:
-                        map.put(key, json.getJSONArray(key).toString(0));
+                        //map.put(key, json.getJSONArray(key).toString(0));
+                    	map.put(key, json.getJSONArray(key));
                         break;
                     case DATA_TYPE_STRING:
                     default:
@@ -205,6 +206,12 @@ public abstract class AbstractHandler<T extends SwampThing> {
     }
 
     public SwampThing create(ConversionMapImpl map) {
+        MyResponse mr = getClient().rawPost(getURL(), map);
+        SwampThing p = fromJSON(mr.json);
+        return p;
+    }
+
+    public SwampThing create(JSONObject map) {
         MyResponse mr = getClient().rawPost(getURL(), map);
         SwampThing p = fromJSON(mr.json);
         return p;

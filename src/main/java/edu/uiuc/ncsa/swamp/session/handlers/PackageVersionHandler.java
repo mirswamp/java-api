@@ -79,7 +79,7 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
     }
 
     protected T fromJSON(JSONObject json) {
-        T packageThing = (T) new PackageVersion(getSession());
+        T packageVersion = (T) new PackageVersion(getSession());
         ConversionMapImpl map = new ConversionMapImpl();
         String[] sAttrib = {FILENAME, FILE_UPLOAD_NAME, FILE_UPLOAD_PATH, FILE_UPLOAD_EXTENSION, FILE_UPLOAD_MIME_TYPE, FILE_UPLOAD_ID,
                 BUILD_CMD, BUILD_DIR, BUILD_OPT,
@@ -94,8 +94,8 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
         setAttributes(map, dAttrib, json, DATA_TYPE_DATE);
-        packageThing.setConversionMap(map);
-        return packageThing;
+        packageVersion.setConversionMap(map);
+        return packageVersion;
     }
 
     @Override
@@ -118,7 +118,9 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         }
         for (int i = 0; i < mr.jsonArray.size(); i++) {
             JSONObject json = mr.jsonArray.getJSONObject(i);
-            versions.add(fromJSON(json));
+            PackageVersion pkg_ver = fromJSON(json);
+            pkg_ver.setPackageThing(packageThing);
+            versions.add((T) pkg_ver);
         }
 
         return versions;
@@ -162,60 +164,15 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         FileHandle fileHandle = new FileHandle(getSession());
         fileHandle.setIdentifier(SWAMPIdentifiers.toIdentifier(mr.json.getString(FILE_UPLOAD_ID)));
         fileHandle.setExtension(mr.json.getString(PackageVersionHandler.FILE_UPLOAD_EXTENSION));
-        fileHandle.setName(f.getName());
+        //fileHandle.setName(f.getName());
         //fileHandle.setName(mr.json.getString(PackageVersionHandler.FILE_UPLOAD_NAME));
+        fileHandle.setName(mr.json.getString(PackageVersionHandler.FILENAME));
         fileHandle.setPath(mr.json.getString(PackageVersionHandler.FILE_UPLOAD_PATH));
         fileHandle.setSize(mr.json.getLong(PackageVersionHandler.FILE_UPLOAD_SIZE));
         fileHandle.setMimeType(mr.json.getString(PackageVersionHandler.FILE_UPLOAD_MIME_TYPE));
         return fileHandle;
     }
-
-    protected String uploadNew(String pkgName, String description, String pkgUrl, int pkgTypeId) {
-        String url = createURL("packages");
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("package_sharing_status", "private");
-        map.put("name", pkgName);
-        map.put("description", description);
-        map.put("external_url", pkgUrl);
-        map.put("package_type_id", pkgTypeId);
-
-        MyResponse mr = getClient().rawPost(url, map);
-        if (mr.json == null) {
-            if (mr.jsonArray == null) {
-                return null;
-            }
-            if (mr.jsonArray.isEmpty()) return "";
-            return mr.jsonArray.getString(0);
-        } else {
-            if (mr.json.containsKey("error")) {
-                throw new GeneralException("Error posting to " + url + ". Message=" + mr.json);
-            }
-            if (mr.json.containsKey("package_uuid")) return mr.json.getString("package_uuid");
-        }
-        return "";
-    }
-
-    protected String uploadNewOld(FileHandle fileHandle) {
-        String url = createURL("packages/versions/new/file-tree");
-        HashMap<String, Object> map = new HashMap<>();
-        map.put(PACKAGE_PATH, fileHandle.getUUIDString() + "/" + fileHandle.getName() );
-        map.put("dirname", ".");
-        MyResponse mr = getClient().rawGet(url, map);
-        if (mr.json == null) {
-            if (mr.jsonArray == null) {
-                return null;
-            }
-            if (mr.jsonArray.isEmpty()) return "";
-            return mr.jsonArray.getString(0);
-        } else {
-            if (mr.json.containsKey("error")) {
-                throw new GeneralException("Error posting to " + url + ". Message=" + mr.json);
-            }
-            if (mr.json.containsKey("name")) return mr.json.getString("name");
-        }
-        return "";
-    }
-
+ 
     @Override
     public SwampThing create(ConversionMapImpl map) {
         throw new NotImplementedException("This method is not supported for package versions. Use create(PackageThing, File, ConversionMapImpl");
@@ -243,7 +200,8 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         map.put(PACKAGE_UUID, package_uuid);
         map.put(PACKAGE_PATH, packagePath);
         map.put(FILE_UPLOAD_NAME, fileHandle.getName());
-        PackageVersion packageVersion = (PackageVersion) super.create(map); // STEP 3
+        PackageVersion packageVersion = (PackageVersion) super.create(super.mapToJSON(map)); // STEP 3
+        //PackageVersion packageVersion = (PackageVersion) super.create(map); // STEP 3
         //String url = createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"); // STEP 4
         HashMap<String, Object> addMap = new HashMap<>();
         addMap.put("projects[0][project_uid]", map.getString("project_uuid"));

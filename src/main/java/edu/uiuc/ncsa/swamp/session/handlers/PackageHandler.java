@@ -137,11 +137,34 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
     public List<String> getTypes() {
         String url = createURL("packages/types");
         MyResponse mr = getClient().rawGet(url, null);
-        // DebugUtil.say(this, ".getTypes = " + mr.json);
-        // DebugUtil.say(this, ".getTypes = " + mr.jsonArray);
-        return mr.jsonArray;
+
+        List<String> pkg_types = new ArrayList<String>();
+        for (int i = 0; i < mr.jsonArray.size(); ++i){
+        	pkg_types.add(mr.jsonArray.getJSONObject(i).getString("name"));
+        }
+        return pkg_types;
     }
-    
+
+    /*
+     * Input: Package Type name
+     * Output: Returns a platform UUID
+     * 
+     * */
+    public String getDefaultPlatform(String pkg_type) {
+        String url = createURL("packages/types");
+        MyResponse mr = getClient().rawGet(url, null);
+        String default_platform_uuid = null;
+        
+        
+        for (int i = 0; i < mr.jsonArray.size(); ++i){
+        	if (pkg_type.equals(mr.jsonArray.getJSONObject(i).getString("name"))){
+        		default_platform_uuid = mr.jsonArray.getJSONObject(i).getString("default_platform_uuid");
+        		break;
+        	}
+        }
+        return default_platform_uuid;
+    }
+
     public boolean deletePackage(PackageThing pkg) {
     	MyResponse mr = null;
     	mr = getClient().delete(getURL() + "/" + pkg.getUUIDString());

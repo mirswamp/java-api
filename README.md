@@ -2,6 +2,8 @@
 
 A Java API for https://www.mir-swamp.org/.
 
+[![Build Status](https://travis-ci.org/mirswamp/java-api.svg?branch=master)](https://travis-ci.org/mirswamp/java-api)
+
 ## Prerequisites
 
 * Java 8+

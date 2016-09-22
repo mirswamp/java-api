@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-          <groupId>org.sonatype.oss</groupId>
-          <artifactId>oss-parent</artifactId>
-          <version>7</version>
-      </parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
     <groupId>edu.uiuc.ncsa.swamp</groupId>
     <artifactId>ncsa-swamp</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -45,18 +45,21 @@
                 </configuration>
             </plugin>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-gpg-plugin</artifactId>
-              <version>1.5</version>
-              <executions>
-                <execution>
-                  <id>sign-artifacts</id>
-                  <phase>verify</phase>
-                  <goals>
-                    <goal>sign</goal>
-                  </goals>
-                </execution>
-              </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -127,17 +130,17 @@
     </repositories>
 
     <distributionManagement>
-         <repository>
-             <id>sonatype-nexus-staging</id>
-             <name>sonatype</name>
-             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
-             </url>
-         </repository>
-         <snapshotRepository>
-             <id>sonatype-nexus-snapshots</id>
-             <name>sonatype</name>
-             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-             <uniqueVersion>false</uniqueVersion>
-         </snapshotRepository>
-     </distributionManagement>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>sonatype</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>sonatype</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

@@ -68,7 +68,7 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
 
     public boolean hasPermission(Tool tool, Project project, PackageThing package_thing) {
     	String url = createURL("tools/" + tool.getUUIDString() + "/permission");
-    	HashMap<String, Object> map = new <String, Object>HashMap();
+    	HashMap<String, Object> map = new HashMap<String, Object>();
     	map.put("package_uuid", package_thing.getUUIDString());
     	map.put("project_uid", project.getUUIDString());
         MyResponse mr = getClient().rawPost(url, map);

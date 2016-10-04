@@ -56,7 +56,7 @@ public class DebugUtil {
     }
 
     public static Character[] intersection(Character[] x, Character[] y) {
-        HashSet a = new HashSet(); // cuts out duplicates.
+        HashSet<Character> a = new HashSet<Character>(); // cuts out duplicates.
         for (int i = 0; i < x.length; i++) {
             for (int j = 0; j < y.length; j++) {
                 if (x[i].equals(y[j])) {

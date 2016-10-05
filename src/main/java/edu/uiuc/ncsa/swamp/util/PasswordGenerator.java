@@ -65,7 +65,7 @@ public class PasswordGenerator {
     }
     public static String generate(int length, int characterClassCount) {
         init();
-        ArrayList arrayList = new ArrayList();
+        ArrayList<Character> arrayList = new ArrayList<Character>();
 
         int[] partion = partition(length, characterClassCount);
         for (int i = 0; i < characterClassCount; i++) {
@@ -114,8 +114,8 @@ public class PasswordGenerator {
      * @param n
      * @return
      */
-    protected static ArrayList generate(Character[] chars, int n) {
-        ArrayList sb = new ArrayList();
+    protected static ArrayList<Character> generate(Character[] chars, int n) {
+        ArrayList<Character> sb = new ArrayList<Character>();
         for (int i = 0; i < n; i++) {
             sb.add(chars[secureRandom.nextInt(chars.length)]);
         }

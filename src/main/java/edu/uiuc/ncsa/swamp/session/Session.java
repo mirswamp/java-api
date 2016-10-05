@@ -119,7 +119,7 @@ public class Session implements Serializable, Cloneable {
         if (sessionActive) {
             throw new IllegalStateException("Error: There is already and active logon. Please log out then try again.");
         }
-        HashMap map = new HashMap();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(USERNAME_KEY, username);
         map.put(PASSWORD_KEY, password);
         MyResponse myResponse = getClient().rawPost(createURL(ENDPOINT_LOGIN), map);

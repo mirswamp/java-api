@@ -1,6 +1,12 @@
 package edu.uiuc.ncsa.swamp.session.handlers;
 
-import edu.uiuc.ncsa.security.core.exceptions.GeneralException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import edu.uiuc.ncsa.security.core.exceptions.NotImplementedException;
 import edu.uiuc.ncsa.swamp.api.FileHandle;
 import edu.uiuc.ncsa.swamp.api.PackageThing;
@@ -12,9 +18,6 @@ import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.util.ConversionMapImpl;
 import edu.uiuc.ncsa.swamp.session.util.SWAMPIdentifiers;
 import net.sf.json.JSONObject;
-
-import java.io.File;
-import java.util.*;
 
 /**
  * <p>Created by Jeff Gaynor<br>

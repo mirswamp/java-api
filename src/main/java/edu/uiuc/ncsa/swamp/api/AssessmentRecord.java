@@ -1,9 +1,7 @@
 package edu.uiuc.ncsa.swamp.api;
 
-import edu.uiuc.ncsa.security.core.Identifier;
 import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.handlers.AssessmentRecordHandler;
-import edu.uiuc.ncsa.swamp.session.handlers.AssessmentRunHandler;
 
 /**
  * This models an assessment. Assessments also point to other objects, in particular

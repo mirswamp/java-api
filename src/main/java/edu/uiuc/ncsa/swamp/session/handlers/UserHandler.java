@@ -45,7 +45,7 @@ public class UserHandler<T extends User> extends AbstractHandler<T> {
     }
 
     public void changePassword(String oldPassword, String newPassword) throws UnsupportedEncodingException {
-        HashMap map = new HashMap();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(OLD_PASSWORD_KEY, oldPassword);
         map.put(NEW_PASSWORD_KEY, newPassword);
         MyResponse myResponse = getClient().rawPut(createURL("users/" + getSession().getUserUID() + "/change-password"), map);

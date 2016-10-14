@@ -5,13 +5,10 @@ import edu.uiuc.ncsa.swamp.api.Project;
 import edu.uiuc.ncsa.swamp.session.MyResponse;
 import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.util.ConversionMapImpl;
-import edu.uiuc.ncsa.swamp.util.DebugUtil;
 import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.http.HttpStatus;
 
 /**
  * <p>Created by Jeff Gaynor<br>

@@ -1,15 +1,12 @@
 package edu.uiuc.ncsa.swamp.session.handlers;
 
-import edu.uiuc.ncsa.security.core.Identifier;
 import edu.uiuc.ncsa.swamp.api.*;
 import edu.uiuc.ncsa.swamp.session.MyResponse;
 import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.util.ConversionMapImpl;
-import edu.uiuc.ncsa.swamp.session.util.SWAMPIdentifiers;
 import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static edu.uiuc.ncsa.swamp.session.handlers.PackageHandler.PACKAGE_UUID_KEY;

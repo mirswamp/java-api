@@ -68,12 +68,17 @@
         <dependency>
             <groupId>edu.uiuc.ncsa.security</groupId>
             <artifactId>ncsa-security-util</artifactId>
-            <version>3.4-SNAPSHOT</version>
+            <version>3.3.0.2</version>
         </dependency>
         <dependency>
             <groupId>edu.uiuc.ncsa.security</groupId>
             <artifactId>ncsa-security-servlet</artifactId>
-            <version>3.4-SNAPSHOT</version>
+            <version>3.3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.uiuc.ncsa.security</groupId>
+            <artifactId>ncsa-security-storage</artifactId>
+            <version>3.3.0.2</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -84,7 +89,7 @@
         <dependency>
             <groupId>edu.uiuc.ncsa.security</groupId>
             <artifactId>ncsa-security-core</artifactId>
-            <version>3.4-SNAPSHOT</version>
+            <version>3.3.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -104,11 +109,7 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-        <dependency>
-            <groupId>edu.uiuc.ncsa.security</groupId>
-            <artifactId>ncsa-security-storage</artifactId>
-            <version>3.4-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>

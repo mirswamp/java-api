@@ -83,6 +83,10 @@ public class AssessmentRecord extends SwampThing{
         return getConversionMap().getString(AssessmentRecordHandler.STATUS_STRING);
     }
 
+    public int getWeaknessCount() {
+        return (Integer)getConversionMap().get(AssessmentRecordHandler.WEAKNESS_COUNT);
+    }
+    
     @Override
     public String toString() {
         return "AssessmentRecord[" +

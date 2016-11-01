@@ -4,6 +4,7 @@ import edu.uiuc.ncsa.swamp.api.*;
 import edu.uiuc.ncsa.swamp.session.MyResponse;
 import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.util.ConversionMapImpl;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
@@ -25,7 +26,8 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
     public static final String PACKAGE_VERSION_UUID = "package_version_uuid";
     public static final String PLATFORM_VERSION_UUID = "platform_version_uuid";
     public static final String TOOL_VERSION_UUID = "tool_version_uuid";  // tool version uuid.
-    public static final String STATUS_STRING = "status";  // tool version uuid.
+    public static final String STATUS_STRING = "status";
+    public static final String WEAKNESS_COUNT = "weakness_cnt";
 
     public AssessmentRecordHandler(Session session) {
         super(session);
@@ -99,6 +101,18 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
         
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
         setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
+
+        if (map.getString(STATUS_STRING).equals("Finished")) {
+            try {
+                map.put(WEAKNESS_COUNT, json.getInt("weakness_cnt"));
+            }catch(JSONException exception) {
+              //In some cases even though the status is Finished, the weakness_cnt is null
+                map.put(WEAKNESS_COUNT, 0);
+            }
+        }else {
+            map.put(WEAKNESS_COUNT, 0);
+        }
+
         a.setConversionMap(map);
         return a;
     }

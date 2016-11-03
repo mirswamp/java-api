@@ -44,7 +44,7 @@ public class DebugUtil {
 
 
     public static boolean isJSONStringEmpty(String x) {
-        return x == null || 0 == x.length() || x == "null"; // needed if, say, JSON returns the string "null".
+        return x == null || 0 == x.length() || "null".equals(x); // needed if, say, JSON returns the string "null".
     }
 
     public static Character[] intersection(Character[] x, String y) {

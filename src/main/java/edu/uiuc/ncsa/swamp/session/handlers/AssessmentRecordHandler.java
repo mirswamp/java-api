@@ -28,7 +28,14 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
     public static final String TOOL_VERSION_UUID = "tool_version_uuid";  // tool version uuid.
     public static final String STATUS_STRING = "status";
     public static final String WEAKNESS_COUNT = "weakness_cnt";
+    public static final String PACKAGE_NAME = "name";
+    public static final String PACKAGE_VERSION = "version_string";
+    public static final String TOOL_NAME = "name";
+    public static final String TOOL_VERSION = "version_string";
+    public static final String PLATFORM_NAME = "name";
+    public static final String PLATFORM_VERSION = "version_string";
 
+    
     public AssessmentRecordHandler(Session session) {
         super(session);
     }
@@ -94,13 +101,33 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
         T a = (T) new AssessmentRecord(getSession());
         ConversionMapImpl map = new ConversionMapImpl();
         String[] uAttrib = {EXECUTION_RECORD_UUID, ASSESSMENT_RUN_UUID, ASSESSMENT_RESULT_UUID,
-        					PROJECT_UUID, PACKAGE_UUID_KEY, PACKAGE_VERSION_UUID, 
-        					TOOL_UUID_KEY, TOOL_VERSION_UUID, PLATFORM_VERSION_UUID, 
-        					PLATFORM_UUID_KEY};
+        					PROJECT_UUID, 
+        					 };
         String[] sAttrib = {STATUS_STRING};
         
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
         setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
+
+        JSONObject pkg_info = json.getJSONObject("package");
+        map.put("package_name", pkg_info.get(PACKAGE_NAME));
+        map.put("package_version", pkg_info.get(PACKAGE_VERSION));
+        
+        setAttributes(map, new String[] {PACKAGE_UUID_KEY, PACKAGE_VERSION_UUID},
+                pkg_info, DATA_TYPE_IDENTIFIER);
+                
+        JSONObject tool_info = json.getJSONObject("tool");
+        map.put("tool_name", pkg_info.get(TOOL_NAME));
+        map.put("tool_version", pkg_info.get(TOOL_VERSION));
+        
+        setAttributes(map, new String[] {TOOL_UUID_KEY, TOOL_VERSION_UUID},
+                tool_info, DATA_TYPE_IDENTIFIER);
+
+        JSONObject plat_info = json.getJSONObject("platform");
+        map.put("platform_name", pkg_info.get(PLATFORM_NAME));
+        map.put("platform_version", pkg_info.get(PLATFORM_VERSION));
+        
+        setAttributes(map, new String[] {PLATFORM_UUID_KEY, PLATFORM_VERSION_UUID},
+                plat_info, DATA_TYPE_IDENTIFIER);
 
         if (map.getString(STATUS_STRING).equals("Finished")) {
             try {

@@ -2,6 +2,8 @@ package edu.uiuc.ncsa.swamp.api;
 
 import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.handlers.AssessmentRecordHandler;
+import edu.uiuc.ncsa.swamp.session.handlers.PackageHandler;
+import edu.uiuc.ncsa.swamp.session.handlers.ToolHandler;
 
 /**
  * This models an assessment. Assessments also point to other objects, in particular
@@ -85,6 +87,30 @@ public class AssessmentRecord extends SwampThing{
 
     public int getWeaknessCount() {
         return (Integer)getConversionMap().get(AssessmentRecordHandler.WEAKNESS_COUNT);
+    }
+
+    public String getProjectUUID() {
+        return getConversionMap().getString(AssessmentRecordHandler.PROJECT_UUID);
+    }
+
+    public String getPackageUUID() {
+        return getConversionMap().getString(PackageHandler.PACKAGE_UUID_KEY);
+    }
+
+    public String getPackageVersionUUID() {
+        return getConversionMap().getString(AssessmentRecordHandler.PACKAGE_VERSION_UUID);
+    }
+
+    public String getToolUUID() {
+        return getConversionMap().getString(ToolHandler.TOOL_UUID_KEY);
+    }
+
+    public String getToolVersionUUID() {
+        return getConversionMap().getString(AssessmentRecordHandler.TOOL_VERSION_UUID);
+    }
+
+    public String getPlatformUUID() {
+        return getConversionMap().getString(AssessmentRecordHandler.PLATFORM_VERSION_UUID);
     }
     
     @Override

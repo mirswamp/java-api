@@ -1,12 +1,5 @@
 package edu.uiuc.ncsa.swamp.session.handlers;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import edu.uiuc.ncsa.security.core.exceptions.NotImplementedException;
 import edu.uiuc.ncsa.swamp.api.FileHandle;
 import edu.uiuc.ncsa.swamp.api.PackageThing;
@@ -18,6 +11,9 @@ import edu.uiuc.ncsa.swamp.session.Session;
 import edu.uiuc.ncsa.swamp.session.util.ConversionMapImpl;
 import edu.uiuc.ncsa.swamp.session.util.SWAMPIdentifiers;
 import net.sf.json.JSONObject;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * <p>Created by Jeff Gaynor<br>
@@ -207,7 +203,7 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         //PackageVersion packageVersion = (PackageVersion) super.create(map); // STEP 3
         //String url = createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"); // STEP 4
         HashMap<String, Object> addMap = new HashMap<>();
-        addMap.put("projects[0][project_uid]", map.getString("project_uuid"));
+        addMap.put("projects[0][project_uid]", map.getString("package_uuid"));
         try {
             getClient().rawPut(createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"), addMap);
         } catch (NoJSONReturnedException x) {

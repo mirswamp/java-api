@@ -8,8 +8,8 @@
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
-    <groupId>edu.uiuc.ncsa.swamp</groupId>
-    <artifactId>ncsa-swamp</artifactId>
+    <groupId>org.continuousassurance.swamp</groupId>
+    <artifactId>java-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

@@ -115,16 +115,7 @@
             <artifactId>httpmime</artifactId>
             <version>4.5.2</version>
         </dependency>
-        <dependency>
-            <groupId>edu.uiuc.ncsa.security</groupId>
-            <artifactId>ncsa-security-core</artifactId>
-            <version>3.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.uiuc.ncsa.security</groupId>
-            <artifactId>ncsa-security-core</artifactId>
-            <version>3.2.1</version>
-        </dependency>
+
     </dependencies>
 
     <repositories>

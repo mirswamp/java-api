@@ -14,6 +14,7 @@ public interface SWAMPConfigTags extends ConfigurationTags {
      */
     public static final String SWAMP_COMPONENT_NAME = "swamp";
     public static final String SERVER_ADDRESSES_TAG = "addresses";
+    public static final String FRONTEND_ADDRESS_TAG = "server";
     public static final String RWS_ADDRESS_TAG = "rws";
     public static final String CSA_ADDRESS_TAG = "csa";
     public static final String HEADERS_TAG = "headers";

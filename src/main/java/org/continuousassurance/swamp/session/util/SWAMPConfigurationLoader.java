@@ -5,7 +5,10 @@ import edu.uiuc.ncsa.security.core.util.LoggingConfigLoader;
 import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.util.ssl.SSLConfiguration;
 import edu.uiuc.ncsa.security.util.ssl.SSLConfigurationUtil;
+import net.sf.json.JSONObject;
 import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.continuousassurance.swamp.session.MyResponse;
+import org.continuousassurance.swamp.session.SWAMPHttpClient;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
 
     @Override
     public T createInstance() {
+        getServers(); // set the servers from discovery, if possible.
         return (T) new SWAMPServiceEnvironment(getRWSServer(),
                 getCSAServer(),
                 getUsername(),
@@ -87,9 +91,40 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
 
     URI rwsServer;
 
-
+    /**
+     * This will try to set the RWS and CSA servers from the
+     */
+   public void getServers(){
+       if(rwsServer == null || csaServer == null){
+           String serverURL = getFirstAttribute(cn,FRONTEND_ADDRESS_TAG);
+           if(serverURL == null || serverURL.length()==0){
+               return; //nothing to do
+           }
+           if(!serverURL.endsWith("/")){
+               serverURL = serverURL + "/";
+           }
+           SSLConfiguration sslConfiguration = new SSLConfiguration();sslConfiguration.setUseDefaultJavaTrustStore(true);
+           SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration);
+           MyResponse raw = client.rawGet(serverURL + "config/config.json");
+           String webServerURL = null;
+           if(raw.hasJSON()){
+               if(raw.json.containsKey("servers")){
+                   JSONObject servers = raw.json.getJSONObject("servers");
+                   if(servers.containsKey("web")){
+                       webServerURL = servers.getString("web");
+                   }
+               }
+           }
+           if(webServerURL == null){
+               return; //nothing to do.
+           }
+           rwsServer = URI.create(webServerURL);
+           csaServer = URI.create(webServerURL);
+       }
+   }
     public URI getRWSServer() {
         if (rwsServer == null) {
+            getServers();
             List kids = cn.getChildren(SERVER_ADDRESSES_TAG);
             if (kids.isEmpty()) {
                 throw new GeneralException("Error: no servers configured");
@@ -108,6 +143,7 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
 
     public URI getCSAServer() {
         if (csaServer == null) {
+            getServers();
             List kids = cn.getChildren(SERVER_ADDRESSES_TAG);
             if (kids.isEmpty()) {
                 throw new GeneralException("Error: no servers configured");

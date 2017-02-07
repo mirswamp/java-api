@@ -9,7 +9,7 @@ import static org.continuousassurance.swamp.util.DebugUtil.intersection;
 
 /**
  * This is a class that will generate a random SWAMP password according to the spec.
- * This means that a password must have at least one of each if 9 characters long<br/>
+ * This means that a password must have at least one of each of 9 characters long<br/>
  * <ul>
  * <li>lower case</li>
  * <li>upper case</li>

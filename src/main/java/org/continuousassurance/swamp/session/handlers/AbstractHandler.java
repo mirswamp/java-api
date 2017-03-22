@@ -1,5 +1,6 @@
 package org.continuousassurance.swamp.session.handlers;
 
+import net.sf.json.JSONArray;
 import org.continuousassurance.swamp.session.MyResponse;
 import org.continuousassurance.swamp.session.Session;
 import edu.uiuc.ncsa.security.core.Identifier;
@@ -154,6 +155,7 @@ public abstract class AbstractHandler<T extends SwampThing> {
         if (o instanceof Boolean) return DATA_TYPE_BOOLEAN;
         if (o instanceof Identifier) return DATA_TYPE_IDENTIFIER;
         if (o instanceof Date) return DATA_TYPE_DATE;
+        if(o instanceof JSONArray) return DATA_TYPE_ARRAY;
         throw new IllegalArgumentException("Error: Unknown data type for object of type " + o.getClass().getCanonicalName());
     }
 

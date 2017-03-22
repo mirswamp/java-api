@@ -1,13 +1,15 @@
 package org.continuousassurance.swamp.session.handlers;
 
-import org.continuousassurance.swamp.api.Project;
-import org.continuousassurance.swamp.session.MyResponse;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.continuousassurance.swamp.api.AssessmentRun;
+import org.continuousassurance.swamp.api.Project;
 import org.continuousassurance.swamp.api.RunRequest;
+import org.continuousassurance.swamp.session.MyResponse;
 import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.util.ConversionMapImpl;
-import net.sf.json.JSONObject;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -67,6 +69,26 @@ public class RunRequestHandler<T extends RunRequest> extends AbstractHandler<Run
         RunRequest rr = (RunRequest) super.create(map);
         rr.setProject(project);
         return rr;
+    }
+    public boolean submitOneTimeRequest(Collection<AssessmentRun> aRuns, boolean notifyWhenDone){
+        String url = createURL("run_requests/one-time");
+        HashMap<String, Object> parameters = new HashMap<>();
+        if(notifyWhenDone) {
+            parameters.put("notify-when-done", "true");
+        }
+        JSONArray uuids = new JSONArray();
+        for(AssessmentRun arun : aRuns){
+            uuids.add(arun.getUUIDString());
+        }
+        parameters.put("assessment-run-uuids[]", uuids);
+        MyResponse myResponse = getClient().rawPost(url, parameters);
+
+        if (myResponse.jsonArray != null){
+        	return true;
+        }else {
+        	return false;
+        }
+
     }
     public boolean submitOneTimeRequest(AssessmentRun aRun, boolean notifyWhenDone){
         String url = createURL("run_requests/one-time");

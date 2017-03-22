@@ -203,8 +203,7 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         //PackageVersion packageVersion = (PackageVersion) super.create(map); // STEP 3
         //String url = createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"); // STEP 4
         HashMap<String, Object> addMap = new HashMap<>();
-        addMap.put("projects[0][project_uid]", map.getString("project" +
-                "_uuid"));
+     //   addMap.put("projects[0][project_uid]", map.getString("project_uuid"));
         try {
             getClient().rawPut(createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"), addMap);
         } catch (NoJSONReturnedException x) {

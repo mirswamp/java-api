@@ -2,6 +2,8 @@ package org.continuousassurance.swamp.api;
 
 import org.continuousassurance.swamp.session.Session;
 
+import java.util.Map;
+
 /**
  * A package version for C source code.
  * <p>Created by Jeff Gaynor<br>
@@ -10,6 +12,9 @@ import org.continuousassurance.swamp.session.Session;
 public class CSourcePackageVersion extends PackageVersion {
     public CSourcePackageVersion(Session session) {
         super(session);
+    }
+    public CSourcePackageVersion(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

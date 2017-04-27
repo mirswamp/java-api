@@ -1,17 +1,18 @@
 package org.continuousassurance.swamp.session.handlers;
 
-import net.sf.json.JSONArray;
-import org.continuousassurance.swamp.session.MyResponse;
-import org.continuousassurance.swamp.session.Session;
 import edu.uiuc.ncsa.security.core.Identifier;
 import edu.uiuc.ncsa.security.core.util.Iso8601;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
 import org.continuousassurance.swamp.api.SwampThing;
+import org.continuousassurance.swamp.session.MyResponse;
 import org.continuousassurance.swamp.session.SWAMPHttpClient;
+import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.util.ConversionMapImpl;
 import org.continuousassurance.swamp.session.util.Dates;
 import org.continuousassurance.swamp.session.util.SWAMPIdentifiers;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 import java.util.Collection;
 import java.util.Date;
@@ -77,6 +78,7 @@ public abstract class AbstractHandler<T extends SwampThing> {
         return true;
 
     }
+
     public boolean delete(SwampThing a) {
         return delete(a.getIdentifier());
     }
@@ -135,11 +137,14 @@ public abstract class AbstractHandler<T extends SwampThing> {
                         break;
                     case DATA_TYPE_ARRAY:
                         //map.put(key, json.getJSONArray(key).toString(0));
-                    	map.put(key, json.getJSONArray(key));
+                        map.put(key, json.getJSONArray(key));
                         break;
                     case DATA_TYPE_STRING:
                     default:
-                        map.put(key, json.getString(key));
+                        Object object = json.get(key);
+                        if ((object != null) && !(object instanceof JSONNull)) {
+                            map.put(key, object.toString());
+                        }
                 }
             } catch (JSONException js) {
                 map.put(key, null);
@@ -155,7 +160,7 @@ public abstract class AbstractHandler<T extends SwampThing> {
         if (o instanceof Boolean) return DATA_TYPE_BOOLEAN;
         if (o instanceof Identifier) return DATA_TYPE_IDENTIFIER;
         if (o instanceof Date) return DATA_TYPE_DATE;
-        if(o instanceof JSONArray) return DATA_TYPE_ARRAY;
+        if (o instanceof JSONArray) return DATA_TYPE_ARRAY;
         throw new IllegalArgumentException("Error: Unknown data type for object of type " + o.getClass().getCanonicalName());
     }
 

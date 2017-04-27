@@ -1,9 +1,10 @@
 package org.continuousassurance.swamp.api;
 
-import org.continuousassurance.swamp.session.handlers.UserHandler;
 import org.continuousassurance.swamp.session.Session;
+import org.continuousassurance.swamp.session.handlers.UserHandler;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * This models a user in the swamp.
@@ -13,6 +14,9 @@ import java.util.Date;
 public class User extends SwampThing {
     public User(Session session) {
         super(session);
+    }
+    public User(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

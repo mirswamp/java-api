@@ -5,6 +5,8 @@ import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.handlers.PackageHandler;
 import org.continuousassurance.swamp.session.handlers.ToolHandler;
 
+import java.util.Map;
+
 /**
  * This models an assessment. Assessments also point to other objects, in particular
  * each assessment will point to a corresponding<br/>
@@ -28,6 +30,10 @@ public class AssessmentRecord extends SwampThing{
 
     public AssessmentRecord(Session session) {
         super(session);
+    }
+
+    public AssessmentRecord(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

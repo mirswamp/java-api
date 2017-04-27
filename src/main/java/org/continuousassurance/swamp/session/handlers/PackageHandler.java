@@ -1,11 +1,14 @@
 package org.continuousassurance.swamp.session.handlers;
 
-import org.continuousassurance.swamp.api.Project;
+import edu.uiuc.ncsa.security.core.Identifier;
+import net.sf.json.JSONObject;
 import org.continuousassurance.swamp.api.PackageThing;
+import org.continuousassurance.swamp.api.PackageVersion;
+import org.continuousassurance.swamp.api.Project;
 import org.continuousassurance.swamp.session.MyResponse;
 import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.util.ConversionMapImpl;
-import net.sf.json.JSONObject;
+import org.continuousassurance.swamp.util.HandlerFactoryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +110,19 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         return pkgs;
     }
 
+    @Override
+    public T get(Identifier identifier) {
+        T t = super.get(identifier);
+        List<PackageVersion> versions = (List<PackageVersion>) HandlerFactoryUtil.getPackageVersionH().getAll(t);
+        t.setVersions(versions);
+        return t;
+    }
+
+    /**
+     * Return all the packages associated with a project.
+     * @param project
+     * @return
+     */
     public List<T> getAll(Project project) {
         MyResponse mr = null;
         mr = getClient().rawGet(createURL("packages/protected/"+ project.getUUIDString()), null);

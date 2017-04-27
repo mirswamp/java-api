@@ -113,6 +113,28 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
     }
 
     /**
+     * This will retrieve the string the server uses to identify its current version. Clients should check
+     * that they are talking to a supported server.
+     * @param serverURL
+     * @return
+     */
+    public static String getServerVersion(String serverURL){
+        if(!serverURL.endsWith("/")){
+              serverURL = serverURL + "/";
+          }
+          SSLConfiguration sslConfiguration = new SSLConfiguration();
+          sslConfiguration.setUseDefaultJavaTrustStore(true);
+          SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration);
+          MyResponse raw = client.rawGet(serverURL + "config/config.json");
+          String version = null;
+          if(raw.hasJSON()){
+              if(raw.json.containsKey("version")){
+                  version = raw.json.getString("version");
+              }
+          }
+          return version;
+    }
+    /**
      * This will take the URL of the server and do discovery to return the web services endpoint.
      * In earlier versions of the SWAMP the CSA and RWS endpoints were independent. Since about version
      * 1.25 they are now identical and since about version 1.28 can be discovered.

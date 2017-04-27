@@ -3,6 +3,8 @@ package org.continuousassurance.swamp.api;
 import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.handlers.RunRequestHandler;
 
+import java.util.Map;
+
 /**
  * This models a run request. Properties supported are
  * <ul>
@@ -16,6 +18,9 @@ import org.continuousassurance.swamp.session.handlers.RunRequestHandler;
 public class RunRequest extends SwampThing{
     public RunRequest(Session session) {
         super(session);
+    }
+    public RunRequest(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

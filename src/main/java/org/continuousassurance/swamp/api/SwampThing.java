@@ -1,13 +1,17 @@
 package org.continuousassurance.swamp.api;
 
-import org.continuousassurance.swamp.session.Session;
-import org.continuousassurance.swamp.session.handlers.PackageVersionHandler;
-import org.continuousassurance.swamp.session.util.SWAMPIdentifiers;
 import edu.uiuc.ncsa.security.core.Identifiable;
 import edu.uiuc.ncsa.security.core.Identifier;
+import net.sf.json.JSONArray;
+import org.continuousassurance.swamp.session.Session;
+import org.continuousassurance.swamp.session.handlers.PackageVersionHandler;
 import org.continuousassurance.swamp.session.util.ConversionMapImpl;
+import org.continuousassurance.swamp.session.util.SWAMPIdentifiers;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Top level for all SWAMP objects. A few key concepts are that while internally to the SWAMP
@@ -21,17 +25,41 @@ import java.util.Date;
  * subclass has customized mutators to get properties
  * (e.g. for a user, the first name) and these mutators should be used rather than the conversion map,
  * since they are closely allied with the API as it comes over the wire.
- *
+ * <p/>
  * <p>Created by Jeff Gaynor<br>
  * on 11/18/14 at  4:04 PM
  */
 public abstract class SwampThing implements Identifiable {
+
+    /**
+     * Set the session for this thing. All things must be tied to a session.
+     *
+     * @param session
+     */
+    protected SwampThing(Session session) {
+        this.session = session;
+    }
+
+    /**
+     * A constructor to set the internal state of this object from a map.
+     *
+     * @param map
+     */
+
+    public SwampThing(Session session, Map map) {
+        // Fixes IAM-109
+        this.session = session;
+        getConversionMap().putAll(map);
+    }
+
     /**
      * This returns a new instance of whatever the current Swamp thing is. It is invoked in the clone method mostly.
      * This effectively lets you call the constructor you want on the current object.
+     *
      * @return
      */
     protected abstract SwampThing getNewInstance();
+
     @Override
     public Identifiable clone() {
         SwampThing p = getNewInstance();
@@ -93,16 +121,20 @@ public abstract class SwampThing implements Identifiable {
         return SWAMPIdentifiers.fromIdentifier(getIdentifier());
     }
 
-    protected SwampThing(Session session) {
-        this.session = session;
+
+    public String getFilename() {
+        return getConversionMap().getString(PackageVersionHandler.FILENAME);
     }
-   public String getFilename(){return getConversionMap().getString(PackageVersionHandler.FILENAME);}
-   public void setFilename(String filename){getConversionMap().put(PackageVersionHandler.FILENAME, filename);}
+
+    public void setFilename(String filename) {
+        getConversionMap().put(PackageVersionHandler.FILENAME, filename);
+    }
 
     /**
      * An internally used map to manage values and convert between them when they are marshalled or unmarshalled.
      * This method is public because of Java requirements on visibility to utilities in other packages. Generally
      * you should not need to access properties for this object through this map.
+     *
      * @return
      */
     public ConversionMapImpl getConversionMap() {
@@ -127,7 +159,7 @@ public abstract class SwampThing implements Identifiable {
         return getConversionMap().getString(key);
     }
 
-    protected long getLong(String key){
+    protected long getLong(String key) {
         return getConversionMap().getLong(key);
     }
 
@@ -142,7 +174,6 @@ public abstract class SwampThing implements Identifiable {
     protected Date getDate(String key) {
         return getConversionMap().getDate(key);
     }
-
 
 
     Session session;
@@ -164,6 +195,29 @@ public abstract class SwampThing implements Identifiable {
         changed = false;
     }
 
+    /**
+     * test that an object is really a JSONArray and return it as a list of strings.
+     * If it is not, it is null or is empty an empty list is returned.
+     *
+     * @param object
+     * @return
+     */
+    public List<String> getAsArray(Object object) {
+        if (object == null) {
+            return new LinkedList<>();
+        }
+        if (object instanceof JSONArray) {
+            return (List<String>) object;
+        } else {
+            return new LinkedList<String>();
+        }
+    }
+
+    public List<String> getAsArray(String key) {
+        return getAsArray(getConversionMap().get(key));
+    }
+
+
     @Override
     public String toString() {
         String x = getClass().getSimpleName() + "[";
@@ -172,7 +226,7 @@ public abstract class SwampThing implements Identifiable {
         }
         boolean firstPass = true;
         for (String z : getConversionMap().keySet()) {
-            x = x + (firstPass?"":",") + z + "=" + getConversionMap().get(z);
+            x = x + (firstPass ? "" : ",") + z + "=" + getConversionMap().get(z);
             if (firstPass) {
                 firstPass = false;
             }

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
+
  * A {@link HashMap} that has custom built-in conversion methods. You put objects of the required type
  * into this map and retrieve then with the appropriate getter (which casts or whatever is needed).
  * <p>Created by Jeff Gaynor<br>
@@ -16,6 +17,8 @@ import java.util.HashMap;
 public class ConversionMapImpl extends HashMap<String, Object> implements ConversionMap<String, Object> {
     public static final boolean BOOLEAN_DEFAULT = false;
     public static final long LONG_DEFAULT = 0L;
+
+
     @Override
     public Date getDate(java.lang.String key) {
         return (Date) get(key);

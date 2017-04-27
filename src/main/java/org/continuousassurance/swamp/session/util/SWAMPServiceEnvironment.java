@@ -1,16 +1,10 @@
 package org.continuousassurance.swamp.session.util;
 
-import org.continuousassurance.swamp.api.Project;
-import org.continuousassurance.swamp.api.Tool;
-import org.continuousassurance.swamp.session.handlers.HandlerFactory;
-import org.continuousassurance.swamp.session.storage.PackageStore;
-import org.continuousassurance.swamp.session.storage.ProjectStore;
 import edu.uiuc.ncsa.security.core.util.AbstractEnvironment;
 import edu.uiuc.ncsa.security.util.ssl.SSLConfiguration;
-import org.continuousassurance.swamp.api.PackageThing;
-import org.continuousassurance.swamp.api.PackageVersion;
-import org.continuousassurance.swamp.session.storage.PackageVersionStore;
-import org.continuousassurance.swamp.session.storage.ToolStore;
+import org.continuousassurance.swamp.api.*;
+import org.continuousassurance.swamp.session.handlers.HandlerFactory;
+import org.continuousassurance.swamp.session.storage.*;
 import org.continuousassurance.swamp.util.HandlerFactoryUtil;
 
 import java.net.URI;
@@ -146,5 +140,14 @@ public class SWAMPServiceEnvironment extends AbstractEnvironment {
             toolStore = new ToolStore<>(getHandlerFactory().getToolHandler());
         }
         return toolStore;
+    }
+
+    PlatformStore platformStore = null;
+
+    public PlatformStore<? extends Platform> getPlatformStore() {
+        if (platformStore == null) {
+            platformStore = new PlatformStore(getHandlerFactory().getPlatformHandler());
+        }
+        return platformStore;
     }
 }

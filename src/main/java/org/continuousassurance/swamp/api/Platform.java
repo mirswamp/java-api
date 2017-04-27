@@ -3,6 +3,8 @@ package org.continuousassurance.swamp.api;
 import org.continuousassurance.swamp.session.Session;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.continuousassurance.swamp.session.handlers.PlatformHandler.*;
 
@@ -20,6 +22,9 @@ public class Platform extends SwampThing {
     public Platform(Session session) {
         super(session);
     }
+    public Platform(Session session, Map map) {
+        super(session, map);
+    }
 
     @Override
     protected SwampThing getNewInstance() {
@@ -34,6 +39,8 @@ public class Platform extends SwampThing {
     public void setPlatformSharingStatus(String sharingStatus){put(PLATFORM_SHARING_STATUS_KEY, sharingStatus);}
     public Date getCreateDate(){return getDate(CREATE_DATE_KEY);}
     public void setCreateDate(Date createDate){put(CREATE_DATE_KEY, createDate);}
+    public String getDescription(){return getString(DESCRIPTION_KEY);}
+    public List<String> getVersions(){return getAsArray(VERSION_STRINGS_KEY);}
 /*
     public Date getUpdateDate(){return getDate(UPDATE_DATE_KEY);}
     public void setUpdateDate(Date updateDate){put(UPDATE_DATE_KEY,updateDate);}

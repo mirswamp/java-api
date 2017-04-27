@@ -2,6 +2,8 @@ package org.continuousassurance.swamp.api;
 
 import org.continuousassurance.swamp.session.Session;
 
+import java.util.Map;
+
 import static org.continuousassurance.swamp.session.handlers.RunRequestScheduleHandler.RUN_REQUEST_SCHEDULE_UUID;
 
 /**
@@ -18,6 +20,9 @@ import static org.continuousassurance.swamp.session.handlers.RunRequestScheduleH
 public class RunRequestSchedule extends SwampThing{
     public RunRequestSchedule(Session session) {
         super(session);
+    }
+    public RunRequestSchedule(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

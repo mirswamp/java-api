@@ -2,6 +2,8 @@ package org.continuousassurance.swamp.api;
 
 import org.continuousassurance.swamp.session.Session;
 
+import java.util.Map;
+
 import static org.continuousassurance.swamp.session.handlers.PackageVersionHandler.*;
 
 /**
@@ -13,6 +15,9 @@ import static org.continuousassurance.swamp.session.handlers.PackageVersionHandl
 public class FileHandle extends SwampThing{
     public FileHandle(Session session) {
         super(session);
+    }
+    public FileHandle(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

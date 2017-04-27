@@ -3,6 +3,8 @@ package org.continuousassurance.swamp.api;
 import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.handlers.AssessmentRunHandler;
 
+import java.util.Map;
+
 /**
  * This models an assessment. Assessments also point to other objects, in particular
  * each assessment will point to a corresponding<br/>
@@ -19,6 +21,9 @@ import org.continuousassurance.swamp.session.handlers.AssessmentRunHandler;
 public class AssessmentRun extends SwampThing{
     public AssessmentRun(Session session) {
         super(session);
+    }
+    public AssessmentRun(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

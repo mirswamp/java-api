@@ -1,9 +1,9 @@
 package org.continuousassurance.swamp.api;
 
 import org.continuousassurance.swamp.session.Session;
-import org.continuousassurance.swamp.session.util.ConversionMapImpl;
 
 import java.util.Date;
+import java.util.Map;
 
 import static org.continuousassurance.swamp.session.handlers.ProjectHandler.*;
 import static org.continuousassurance.swamp.session.handlers.UserHandler.USER_UID_KEY;
@@ -24,12 +24,7 @@ import static org.continuousassurance.swamp.session.handlers.UserHandler.USER_UI
  * on 11/18/14 at  3:06 PM
  */
 public class Project extends SwampThing {
-    public ConversionMapImpl getConversionMap() {
-        if (conversionMap == null) {
-            conversionMap = new ConversionMapImpl();
-        }
-        return conversionMap;
-    }
+
 
     @Override
     protected SwampThing getNewInstance() {
@@ -41,14 +36,12 @@ public class Project extends SwampThing {
         return PROJECT_UID_KEY;
     }
 
-    public void setConversionMap(ConversionMapImpl conversionMap) {
-        this.conversionMap = conversionMap;
-    }
-
-    ConversionMapImpl conversionMap;
 
     public Project(Session session) {
         super(session);
+    }
+    public Project(Session session, Map map) {
+        super(session, map);
     }
 
 

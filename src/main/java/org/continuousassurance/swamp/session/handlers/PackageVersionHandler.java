@@ -1,16 +1,15 @@
 package org.continuousassurance.swamp.session.handlers;
 
-import org.continuousassurance.swamp.api.FileHandle;
-import org.continuousassurance.swamp.api.PackageThing;
-import org.continuousassurance.swamp.api.PackageVersion;
+import edu.uiuc.ncsa.security.core.exceptions.NotImplementedException;
+import edu.uiuc.ncsa.security.core.util.BasicIdentifier;
+import net.sf.json.JSONObject;
+import org.continuousassurance.swamp.api.*;
+import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
 import org.continuousassurance.swamp.session.MyResponse;
 import org.continuousassurance.swamp.session.Session;
-import edu.uiuc.ncsa.security.core.exceptions.NotImplementedException;
-import org.continuousassurance.swamp.api.SwampThing;
-import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
 import org.continuousassurance.swamp.session.util.ConversionMapImpl;
 import org.continuousassurance.swamp.session.util.SWAMPIdentifiers;
-import net.sf.json.JSONObject;
+import org.continuousassurance.swamp.util.HandlerFactoryUtil;
 
 import java.io.File;
 import java.util.*;
@@ -133,7 +132,7 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
     @Override
     public String getURL() {
         //return createURL("packages/versions");
-    	return createURL("packages/versions/store");
+        return createURL("packages/versions/store");
     }
 
     /*
@@ -171,7 +170,7 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         fileHandle.setMimeType(mr.json.getString(PackageVersionHandler.FILE_UPLOAD_MIME_TYPE));
         return fileHandle;
     }
- 
+
     @Override
     public SwampThing create(ConversionMapImpl map) {
         throw new NotImplementedException("This method is not supported for package versions. Use create(PackageThing, File, ConversionMapImpl");
@@ -201,39 +200,49 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         map.put(FILE_UPLOAD_NAME, fileHandle.getName());
         PackageVersion packageVersion = (PackageVersion) super.create(super.mapToJSON(map)); // STEP 3
         //PackageVersion packageVersion = (PackageVersion) super.create(map); // STEP 3
-        //String url = createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"); // STEP 4
+        // set sharing record-- STEP 4
+        if (map.containsKey("project_uuid")) {
+            setVersionSharingStatus(packageVersion, map.getString("project_uuid"));
+        }
+        packageVersion.setPackageThing(packageThing);
+        packageVersion.setFileHandle(fileHandle);
+        return packageVersion;
+    }
+
+    /**
+     * Sets the sharing record for the given version. This record associates the package with a project
+     * and a failure to set the sharing record means that, in effect, this version does not exist.
+     *
+     * @param packageVersion
+     * @param project_uuid
+     */
+    public void setVersionSharingStatus(PackageVersion packageVersion, String project_uuid) {
         HashMap<String, Object> addMap = new HashMap<>();
-        addMap.put("projects[0][project_uid]", map.getString("project_uuid"));
+        addMap.put("projects[0][project_uid]", project_uuid);
         try {
             getClient().rawPut(createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"), addMap);
         } catch (NoJSONReturnedException x) {
             // rock on. This one method does not return JSON.
         }
-        packageVersion.setPackageThing(packageThing);
-        packageVersion.setFileHandle(fileHandle);
-        return packageVersion;
+
     }
 
-    public PackageVersion createOld(PackageThing packageThing, File f, ConversionMapImpl map) {
-        FileHandle fileHandle = upload(packageThing, f); //STEP 1
-        //map.put(SOURCE_PATH, uploadNew(fileHandle)); // STEP 2
-        String packagePath = fileHandle.getUUIDString() + "/" + fileHandle.getName();
-        map.put(PACKAGE_PATH, packagePath);
-        map.put(PACKAGE_UUID, packageThing.getUUIDString());
-        map.put(FILE_UPLOAD_NAME, fileHandle.getName());
-        PackageVersion packageVersion = (PackageVersion) super.create(map); // STEP 3
-        String url = createURL("packages/versions/" + packageVersion.getUUIDString() + "/add"); // STEP 4
-        HashMap<String, Object> addMap = new HashMap<>();
-        addMap.put(PACKAGE_PATH, packagePath);
-        try {
-            getClient().rawPost(url, addMap);
-        } catch (NoJSONReturnedException x) {
-            // rock on. This one method does not return JSON.
+    /**
+     * Gets all the projects shared with this package version.
+     * @param packageVersion
+     * @return
+     */
+    public List<Project> getSharedProjects(PackageVersion packageVersion) {
+        LinkedList<Project> projects = new LinkedList<>();
+        MyResponse response = getClient().rawGet(createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"));
+        if (response.hasJSON()) {
+            if(response.jsonArray == null) return projects; // if no response, return empty list.
+            // then we should have gotten an array of project uuids.
+            for (int i = 0; i < response.jsonArray.size(); i++) {
+                projects.add(HandlerFactoryUtil.getProjectH().get(BasicIdentifier.newID(response.jsonArray.getString(i))));
+
+            }
         }
-        packageVersion.setPackageThing(packageThing);
-        packageVersion.setFileHandle(fileHandle);
-        return packageVersion;
+        return projects;
     }
-
-    //public JavaSourcePackageVersion createJavaSourcePackageVersion(P)
 }

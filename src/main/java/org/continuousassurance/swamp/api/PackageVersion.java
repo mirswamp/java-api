@@ -3,6 +3,7 @@ package org.continuousassurance.swamp.api;
 import org.continuousassurance.swamp.session.Session;
 
 import java.util.Date;
+import java.util.Map;
 
 import static org.continuousassurance.swamp.session.handlers.PackageVersionHandler.*;
 
@@ -34,6 +35,9 @@ import static org.continuousassurance.swamp.session.handlers.PackageVersionHandl
 public class PackageVersion extends SwampThing {
     public PackageVersion(Session session) {
         super(session);
+    }
+    public PackageVersion(Session session, Map map) {
+        super(session, map);
     }
 
     @Override

@@ -1,7 +1,10 @@
 package org.continuousassurance.swamp.api;
 
-import org.continuousassurance.swamp.session.handlers.PackageHandler;
 import org.continuousassurance.swamp.session.Session;
+import org.continuousassurance.swamp.session.handlers.PackageHandler;
+
+import java.util.List;
+import java.util.Map;
 
 import static edu.uiuc.ncsa.security.core.util.BeanUtils.checkEquals;
 
@@ -23,6 +26,9 @@ public class PackageThing extends SwampThing {
 
     public PackageThing(Session session) {
         super(session);
+    }
+    public PackageThing(Session session, Map map) {
+        super(session, map);
     }
 
     @Override
@@ -65,9 +71,15 @@ public class PackageThing extends SwampThing {
         put(PackageHandler.PACKAGE_TYPE_KEY, type);
     }
 
-    public String getVersions(){
-    	return getConversionMap().getString("version_strings");
+    public List<PackageVersion> getVersions() {
+        return versions;
     }
+
+    public void setVersions(List<PackageVersion> versions) {
+        this.versions = versions;
+    }
+
+    List<PackageVersion> versions;
 
     @Override
     public boolean equals(Object object) {

@@ -27,13 +27,40 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
     public static final String IS_BUILD_NEEDED_KEY = "is_build_needed";
     public static final String POLICY_CODE_KEY = "policy_code";
     public static final String CREATE_DATE_KEY = "create_date";
+    public static final String CREATE_USER_KEY = "create_user";
     public static final String UPDATE_DATE_KEY = "update_date";
     public static final String IS_OWNED_KEY = "is_owned";
+    public static final String IS_RESTRICTED_KEY = "is_restricted";
     public static final String POLICY_KEY = "policy";
     public static final String PACKAGE_TYPE_NAMES = "package_type_names";
     public static final String PLATFORM_NAMES = "platform_names";
-    
+    public static final String DESCRIPTION_KEY = "description";
+    public static final String VERSION_STRINGS_KEY = "version_strings";
+    public static final String VIEWER_NAMES_KEY= "viewer_names";
 
+     /*
+     {"tool_uuid":"56ce7899-b741-11e6-bf70-001a4a81450b"
+     ,"name":"PHPMD",
+     "description":"PHP Mess Detector. <a href=\"https:\/\/phpmd.org\/\">https:\/\/phpmd.org
+     \/<\/a>",
+     "tool_sharing_status":"PUBLIC",
+     "is_build_needed":0,
+     "policy_code":null,
+     "create_user":"root@localhost"
+     ,"create_date":"2017-01-30 16:17:35",
+     "update_user":null,
+     "update_date":null,
+     "package_type_names":["Web Scripting"],
+     "version_strings":["2.5.0"],
+     "platform_names":["Scientific Linux 5 64-bit","CentOS Linux
+      6 64-bit","Ubuntu Linux","CentOS Linux 5 32-bit","Android","Fedora Linux","Scientific Linux 6 32-bit"
+     ,"CentOS Linux 5 64-bit","Scientific Linux 5 32-bit","Red Hat Enterprise Linux 6 32-bit","Scientific
+      Linux 6 64-bit","Debian Linux","CentOS Linux 6 32-bit","Red Hat Enterprise Linux 6 64-bit"],
+      "viewer_names"
+     :["Code Dx","Native"],
+     "is_owned":false,
+     "is_restricted":false}
+      */
     @Override
     public List<T> getAll() {
         String url = createURL("tools/public");
@@ -82,11 +109,11 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
     protected T fromJSON(JSONObject json) {
         T tool = (T) new Tool(getSession());
         ConversionMapImpl map = new ConversionMapImpl();
-        String[] sAttrib = {NAME_KEY,TOOL_SHARING_STATUS_KEY,POLICY_CODE_KEY,POLICY_KEY};
+        String[] sAttrib = {NAME_KEY,TOOL_SHARING_STATUS_KEY,POLICY_CODE_KEY,POLICY_KEY, DESCRIPTION_KEY, CREATE_USER_KEY};
         String[] uAttrib = {TOOL_UUID_KEY};
         String[] dAttrib = {CREATE_DATE_KEY,UPDATE_DATE_KEY};
-        String[] bAttrib = {IS_BUILD_NEEDED_KEY,IS_OWNED_KEY};
-        String[] aAttrib = {PACKAGE_TYPE_NAMES, PLATFORM_NAMES};
+        String[] bAttrib = {IS_BUILD_NEEDED_KEY,IS_OWNED_KEY, IS_RESTRICTED_KEY};
+        String[] aAttrib = {PACKAGE_TYPE_NAMES, PLATFORM_NAMES,VERSION_STRINGS_KEY, VIEWER_NAMES_KEY};
         
         setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
         setAttributes(map, dAttrib, json, DATA_TYPE_DATE);

@@ -78,56 +78,80 @@ public class PlatformVersion extends SwampThing {
 	}
 	
 	public void standardize() {
-		
+
 		switch(getFullName()) {
 		case ("Android Android on Ubuntu 12.04 64-bit"):
 			standardize("Android Ubuntu", "12.04", Bits.BITS_64);
+		break;
 		case ("CentOS Linux 5 32-bit 5.11 32-bit"):
 			standardize("CentOS", "5.11", Bits.BITS_32);
+		break;
 		case ("CentOS Linux 5 64-bit 5.11 64-bit"):
 			standardize("CentOS", "5.11", Bits.BITS_64);
+		break;
 		case ("CentOS Linux 6 32-bit 6.7 32-bit"):
 			standardize("CentOS", "6.7", Bits.BITS_32);
+		break;
 		case ("CentOS Linux 6 64-bit 6.7 64-bit"):
 			standardize("CentOS", "6.7", Bits.BITS_64);
+		break;
 		case ("Debian Linux 7.11 64-bit"):
 			standardize("Debian", "7.11", Bits.BITS_64);
+		break;
 		case ("Debian Linux 8.6 64-bit"):
 			standardize("Debian", "8.6", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 18 64-bit"):
 			standardize("Fedora", "18", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 19 64-bit"):
 			standardize("Fedora", "19", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 20 64-bit"):
 			standardize("Fedora", "20", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 21 64-bit"):
 			standardize("Fedora", "21", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 22 64-bit"):
 			standardize("Fedora", "22", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 23 64-bit"):
 			standardize("Fedora", "23", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 24 64-bit"):
 			standardize("Fedora", "24", Bits.BITS_64);
+		break;
 		case ("Red Hat Enterprise Linux 6 32-bit 6.7 32-bit"):
 			standardize("RHEL", "6.7", Bits.BITS_32);
+		break;
 		case ("Red Hat Enterprise Linux 6 64-bit 6.7 64-bit"):
 			standardize("RHEL", "6.7", Bits.BITS_64);
+		break;
 		case ("Scientific Linux 5 32-bit 5.11 32-bit"):
 			standardize("Scientific Linux", "5.11", Bits.BITS_32);
+		break;
 		case ("Scientific Linux 5 64-bit 5.11 64-bit"):
 			standardize("Scientific Linux", "5.11", Bits.BITS_64);
+		break;
 		case ("Scientific Linux 6 32-bit 6.7 32-bit"):
 			standardize("Scientific Linux", "6.7", Bits.BITS_32);
+		break;
 		case ("Scientific Linux 6 64-bit 6.7 64-bit"):
 			standardize("Scientific Linux", "6.7", Bits.BITS_64);
+		break;
 		case ("Ubuntu Linux 10.04 LTS 64-bit Lucid Lynx"):
 			standardize("Ubuntu", "10.04", Bits.BITS_64);
+		break;
 		case ("Ubuntu Linux 12.04 LTS 64-bit Precise Pangolin"):
 			standardize("Ubuntu", "12.04", Bits.BITS_64);
+		break;
 		case ("Ubuntu Linux 14.04 LTS 64-bit Trusty Tahr"):
 			standardize("Ubuntu", "14.04", Bits.BITS_64);
+		break;
 		case ("Ubuntu Linux 16.04 LTS 64-bit Xenial Xerus"):
 			standardize("Ubuntu", "16.04", Bits.BITS_64);
+		break;
 		default:
 			break;
 		}
@@ -146,7 +170,7 @@ public class PlatformVersion extends SwampThing {
 	}
 
 	public String getDisplayString() {
-		return String.format("%s %s %s", getName(), getVersion(), getBits());
+		return String.format("%s %s %s", getShortName(), getVersion(), getBits());
 	}
 	
 	public String toString() {

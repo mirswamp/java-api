@@ -8,7 +8,9 @@ import org.continuousassurance.swamp.session.util.ConversionMapImpl;
 import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Created by Jeff Gaynor<br>
@@ -130,7 +132,7 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         return createURL("packages");
     }
 
-
+    /*
     public List<String> getTypes() {
         String url = createURL("packages/types");
         MyResponse mr = getClient().rawGet(url, null);
@@ -138,6 +140,18 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         List<String> pkg_types = new ArrayList<String>();
         for (int i = 0; i < mr.jsonArray.size(); ++i){
         	pkg_types.add(mr.jsonArray.getJSONObject(i).getString("name"));
+        }
+        return pkg_types;
+    }*/
+    
+    public Map<String, Integer> getTypes() {
+        String url = createURL("packages/types");
+        MyResponse mr = getClient().rawGet(url, null);
+
+        Map<String, Integer> pkg_types = new HashMap<String, Integer>();
+        for (int i = 0; i < mr.jsonArray.size(); ++i){
+        	pkg_types.put(mr.jsonArray.getJSONObject(i).getString("name"),
+        			Integer.valueOf(mr.jsonArray.getJSONObject(i).getString("name")));
         }
         return pkg_types;
     }

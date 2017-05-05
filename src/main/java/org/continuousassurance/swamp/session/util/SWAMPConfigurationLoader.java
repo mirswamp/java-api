@@ -165,6 +165,29 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
         }
         return webServerURL;
     }
+    
+    public static String getWebServiceURL(String serverURL, SSLConfiguration sslConfiguration) {
+        if(!serverURL.endsWith("/")){
+            serverURL = serverURL + "/";
+        }
+        
+        //sslConfiguration.setUseDefaultJavaTrustStore(true);
+        SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration);
+        MyResponse raw = client.rawGet(serverURL + "config/config.json");
+        String webServerURL = null;
+        if(raw.hasJSON()){
+            if(raw.json.containsKey("servers")){
+                JSONObject servers = raw.json.getJSONObject("servers");
+                if(servers.containsKey("web")){
+                    webServerURL = servers.getString("web");
+                }
+            }
+        }
+        if(webServerURL == null){
+            return null;
+        }
+        return webServerURL;
+    }
 
 
     /**

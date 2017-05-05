@@ -76,10 +76,21 @@ public class HandlerFactory {
         return platformHandler;
     }
 
+    public void setPlatformVersionHandler(PlatformVersionHandler<? extends PlatformVersion> platformVersionHandler) {
+        this.platformVersionHandler = platformVersionHandler;
+    }
+
+    public PlatformVersionHandler<? extends PlatformVersion> getPlatformVersionHandler() {
+        if(platformVersionHandler == null){
+            platformVersionHandler = new PlatformVersionHandler<>(getCSASession());
+        }
+        return platformVersionHandler;
+    }
+
     public void setPlatformHandler(PlatformHandler<? extends Platform> platformHandler) {
         this.platformHandler = platformHandler;
     }
-
+    
     public ProjectHandler<? extends Project> getProjectHandler() {
         if(projectHandler == null){
             projectHandler = new ProjectHandler<>(getRWSSession());
@@ -154,6 +165,7 @@ public class HandlerFactory {
 
     PackageVersionHandler<? extends PackageVersion> packageVersionHandler;
     PlatformHandler<? extends Platform> platformHandler;
+    PlatformVersionHandler<? extends PlatformVersion> platformVersionHandler;
     ProjectHandler<? extends Project> projectHandler;
     ToolHandler<? extends Tool> toolHandler;
     UserHandler<? extends User> userHandler;

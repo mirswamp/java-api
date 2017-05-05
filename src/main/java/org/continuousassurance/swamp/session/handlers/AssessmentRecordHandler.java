@@ -149,4 +149,10 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
     public String getURL() {
         return createURL("assessment_runs");
     }
+    
+    public boolean deleteAssessmentRecord(AssessmentRecord assessmentRecord){
+    	String url = createURL("execution_records/" + assessmentRecord.getUUIDString());
+        MyResponse mr = getClient().delete(url);
+        return mr.hasJSON();
+    }
 }

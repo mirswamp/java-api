@@ -34,6 +34,7 @@ public class PlatformVersionHandler<T extends PlatformVersion> extends AbstractH
                   JSONObject json = mr.jsonArray.getJSONObject(i);
                   T platform_version = fromJSON(json);
                   platform_version.setPlatform(platform);
+                  platform_version.standardize();
                   platform_versions.add(platform_version);
               }
               return platform_versions;

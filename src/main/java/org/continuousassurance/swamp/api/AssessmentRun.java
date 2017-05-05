@@ -56,6 +56,10 @@ public class AssessmentRun extends SwampThing{
         this.platform = platform;
     }
 
+    public void setPlatformVersion(PlatformVersion platform_version) {
+        this.platform_version = platform_version;
+    }
+    
     public Tool getTool() {
         return tool;
     }
@@ -67,6 +71,7 @@ public class AssessmentRun extends SwampThing{
     Project project;
     PackageThing pkg;
     Platform platform;
+    PlatformVersion platform_version;
     Tool tool;
 
     @Override

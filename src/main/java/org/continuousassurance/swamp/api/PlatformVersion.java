@@ -63,9 +63,11 @@ public class PlatformVersion extends SwampThing {
 		
 		public String toString () {
 			if (this == Bits.BITS_32){
-				return "32-bit";
+				//return "32-bit";
+				return "32";
 			}else {
-				return "64-bit";
+				//return "64-bit";
+				return "64";
 			}
 		}
 	}
@@ -86,7 +88,7 @@ public class PlatformVersion extends SwampThing {
 
 		switch(getFullName()) {
 		case ("Android Android on Ubuntu 12.04 64-bit"):
-			standardize("Android Ubuntu", "12.04", Bits.BITS_64);
+			standardize("Android-Ubuntu", "12.04", Bits.BITS_64);
 		break;
 		case ("CentOS Linux 5 32-bit 5.11 32-bit"):
 			standardize("CentOS", "5.11", Bits.BITS_32);
@@ -134,16 +136,16 @@ public class PlatformVersion extends SwampThing {
 			standardize("RHEL", "6.7", Bits.BITS_64);
 		break;
 		case ("Scientific Linux 5 32-bit 5.11 32-bit"):
-			standardize("Scientific Linux", "5.11", Bits.BITS_32);
+			standardize("Scientific", "5.11", Bits.BITS_32);
 		break;
 		case ("Scientific Linux 5 64-bit 5.11 64-bit"):
-			standardize("Scientific Linux", "5.11", Bits.BITS_64);
+			standardize("Scientific", "5.11", Bits.BITS_64);
 		break;
 		case ("Scientific Linux 6 32-bit 6.7 32-bit"):
-			standardize("Scientific Linux", "6.7", Bits.BITS_32);
+			standardize("Scientific", "6.7", Bits.BITS_32);
 		break;
 		case ("Scientific Linux 6 64-bit 6.7 64-bit"):
-			standardize("Scientific Linux", "6.7", Bits.BITS_64);
+			standardize("Scientific", "6.7", Bits.BITS_64);
 		break;
 		case ("Ubuntu Linux 10.04 LTS 64-bit Lucid Lynx"):
 			standardize("Ubuntu", "10.04", Bits.BITS_64);
@@ -175,7 +177,7 @@ public class PlatformVersion extends SwampThing {
 	}
 
 	public String getDisplayString() {
-		return String.format("%s %s %s", getShortName(), getVersion(), getBits());
+		return String.format("%s-%s-%s", getShortName().toLowerCase(), getVersion(), getBits());
 	}
 	
 	public String toString() {

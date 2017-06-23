@@ -100,7 +100,9 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         parameters.put("project_uuid", project.getUUIDString());
         parameters.put("package_version_uuid", pkg_ver.getUUIDString());
         parameters.put(PackageHandler.PACKAGE_UUID_KEY, pkg_ver.getPackageThing().getUUIDString());
-        parameters.put(PLATFORM_UUID_KEY, platform_version.getUUIDString());
+        //parameters.put(PLATFORM_UUID_KEY, platform_version.getUUIDString());
+        parameters.put(PlatformVersion.PLATFORM_UUID_KEY, platform_version.getPlatform().getUUIDString());
+        parameters.put(PlatformVersion.PLATFORM_VERSION_UUID_KEY, platform_version.getUUIDString());
         parameters.put(TOOL_UUID_KEY, tool.getUUIDString()); 
         //parameters.put("tool_version_uuid", tool.getUUIDString());
         MyResponse myResponse = getClient().rawPost(url, parameters);

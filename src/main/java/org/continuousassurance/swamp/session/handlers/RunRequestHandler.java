@@ -78,12 +78,13 @@ public class RunRequestHandler<T extends RunRequest> extends AbstractHandler<Run
         if(notifyWhenDone) {
             parameters.put("notify-when-done", "true");
         }
+        
         JSONArray uuids = new JSONArray();
         for(AssessmentRun arun : aRuns){
             uuids.add(arun.getUUIDString());
         }
-        //parameters.put("assessment-run-uuids[]", uuids);
         parameters.put("assessment-run-uuids", uuids);
+        
         MyResponse myResponse = getClient().rawPost(url, mapToJSON(parameters));
 
         if (myResponse.jsonArray != null){

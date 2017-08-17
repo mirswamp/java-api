@@ -27,6 +27,7 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
     public static final String PACKAGE_NAME_KEY = "name";
     public static final String PACKAGE_DESCRIPTION_KEY = "description";
     public static final String PACKAGE_TYPE_KEY = "package_type";
+    public static final String PACKAGE_LANGUAGE_KEY = "package_language";
     public static final String PACKAGE_TYPE_ID_KEY = "package_type_id";
     public static final String PACKAGE_SHARING_STATUS_KEY = "package_sharing_status";
     public static final String EXTERNAL_URI_KEY = "external_uri";
@@ -55,15 +56,15 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
 
     public PackageThing create(String name,
                                String description,
-
                                int type) {
-        return create(name, description, null, type);
+        return create(name, description, null, type, null);
     }
 
     public PackageThing create(String name,
                                String description,
                                String externalUri,
-                               int type) {
+                               int type,
+                               String pkg_lang) {
         ConversionMapImpl map = new ConversionMapImpl();
         map.put(PACKAGE_OWNER_UUID_KEY, getSession().getUserUID());
         // map.put(PACKAGE_OWNER_UUID_KEY, SWAMPIdentifiers.IDENTIFIER_CAPUT + "deadbeef-cafe-cafe-cafe-deadbeefdeadbeef");
@@ -74,7 +75,30 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         }
         map.put(PACKAGE_DESCRIPTION_KEY, description);
         map.put(PACKAGE_TYPE_ID_KEY, Integer.toString(type));
+        if (pkg_lang != null) {
+        	map.put(PACKAGE_LANGUAGE_KEY, pkg_lang.toLowerCase());
+        }
+        
         return (PackageThing) super.create(map);
+    }
+
+    public PackageThing create(String name,
+    		String description,
+    		String externalUri,
+    		int type) {
+    	ConversionMapImpl map = new ConversionMapImpl();
+    	map.put(PACKAGE_OWNER_UUID_KEY, getSession().getUserUID());
+    	// map.put(PACKAGE_OWNER_UUID_KEY, SWAMPIdentifiers.IDENTIFIER_CAPUT + "deadbeef-cafe-cafe-cafe-deadbeefdeadbeef");
+    	map.put(PACKAGE_SHARING_STATUS_KEY, PACKAGE_SHARING_STATUS_PRIVATE);
+    	map.put(PACKAGE_NAME_KEY, name);
+    	if (externalUri != null) {
+    		map.put(EXTERNAL_URI_KEY, externalUri);
+    	}
+    	map.put(PACKAGE_DESCRIPTION_KEY, description);
+    	map.put(PACKAGE_TYPE_ID_KEY, Integer.toString(type));
+
+
+    	return (PackageThing) super.create(map);
     }
 
 

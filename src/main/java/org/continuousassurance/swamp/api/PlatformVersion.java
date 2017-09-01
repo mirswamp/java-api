@@ -90,6 +90,80 @@ public class PlatformVersion extends SwampThing {
 		case ("Android Android on Ubuntu 12.04 64-bit"):
 			standardize("Android-Ubuntu", "12.04", Bits.BITS_64);
 		break;
+		case ("CentOS Linux 5 32-bit"):
+			standardize("CentOS", "5", Bits.BITS_32);
+		break;
+		case ("CentOS Linux 5 64-bit"):
+			standardize("CentOS", "5", Bits.BITS_64);
+		break;
+		case ("CentOS Linux 6 32-bit"):
+			standardize("CentOS", "6", Bits.BITS_32);
+		break;
+		case ("CentOS Linux 6 64-bit"):
+			standardize("CentOS", "6", Bits.BITS_64);
+		break;
+		case ("Debian 7 64-bit"):
+			standardize("Debian", "7", Bits.BITS_64);
+		break;
+		case ("Debian 8 64-bit"):
+			standardize("Debian", "8", Bits.BITS_64);
+		break;
+		case ("Fedora 18 64-bit"):
+			standardize("Fedora", "18", Bits.BITS_64);
+		break;
+		case ("Fedora 19 64-bit"):
+			standardize("Fedora", "19", Bits.BITS_64);
+		break;
+		case ("Fedora 20 64-bit"):
+			standardize("Fedora", "20", Bits.BITS_64);
+		break;
+		case ("Fedora 21 64-bit"):
+			standardize("Fedora", "21", Bits.BITS_64);
+		break;
+		case ("Fedora 22 64-bit"):
+			standardize("Fedora", "22", Bits.BITS_64);
+		break;
+		case ("Fedora 23 64-bit"):
+			standardize("Fedora", "23", Bits.BITS_64);
+		break;
+		case ("Fedora 24 64-bit"):
+			standardize("Fedora", "24", Bits.BITS_64);
+		break;
+		case ("Scientific 5 32-bit"):
+			standardize("Scientific", "5.11", Bits.BITS_32);
+		break;
+		case ("Scientific 5 64-bit"):
+			standardize("Scientific", "5", Bits.BITS_64);
+		break;
+		case ("Scientific 6 32-bit"):
+			standardize("Scientific", "6", Bits.BITS_32);
+		break;
+		case ("Scientific 6 64-bit"):
+			standardize("Scientific", "6", Bits.BITS_64);
+		break;
+		case ("Ubuntu 10.04 64-bit"):
+			standardize("Ubuntu", "10.04", Bits.BITS_64);
+		break;
+		case ("Ubuntu 12.04 64-bit"):
+			standardize("Ubuntu", "12.04", Bits.BITS_64);
+		break;
+		case ("Ubuntu 14.04 64-bit"):
+			standardize("Ubuntu", "14.04", Bits.BITS_64);
+		break;
+		case ("Ubuntu 16.04 64-bit"):
+			standardize("Ubuntu", "16.04", Bits.BITS_64);
+		break;
+		default:
+			break;
+		}
+	}
+
+	public void standardize_old() {
+
+		switch(getFullName()) {
+		case ("Android Android on Ubuntu 12.04 64-bit"):
+			standardize("Android-Ubuntu", "12.04", Bits.BITS_64);
+		break;
 		case ("CentOS Linux 5 32-bit 5.11 32-bit"):
 			standardize("CentOS", "5.11", Bits.BITS_32);
 		break;

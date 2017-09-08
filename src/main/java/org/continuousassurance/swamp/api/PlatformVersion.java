@@ -85,21 +85,21 @@ public class PlatformVersion extends SwampThing {
 	}
 	
 	public void standardize() {
-
+		
 		switch(getFullName()) {
 		case ("Android Android on Ubuntu 12.04 64-bit"):
 			standardize("Android-Ubuntu", "12.04", Bits.BITS_64);
 		break;
-		case ("CentOS Linux 5 32-bit"):
+		case ("CentOS 5 32-bit"):
 			standardize("CentOS", "5", Bits.BITS_32);
 		break;
-		case ("CentOS Linux 5 64-bit"):
+		case ("CentOS 5 64-bit"):
 			standardize("CentOS", "5", Bits.BITS_64);
 		break;
-		case ("CentOS Linux 6 32-bit"):
+		case ("CentOS 6 32-bit"):
 			standardize("CentOS", "6", Bits.BITS_32);
 		break;
-		case ("CentOS Linux 6 64-bit"):
+		case ("CentOS 6 64-bit"):
 			standardize("CentOS", "6", Bits.BITS_64);
 		break;
 		case ("Debian 7 64-bit"):
@@ -154,6 +154,7 @@ public class PlatformVersion extends SwampThing {
 			standardize("Ubuntu", "16.04", Bits.BITS_64);
 		break;
 		default:
+			System.out.println("Unknown" + getFullName());
 			break;
 		}
 	}

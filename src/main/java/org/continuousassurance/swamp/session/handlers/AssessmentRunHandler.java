@@ -175,4 +175,16 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
     public String getURL() {
         return createURL("assessment_runs");
     }
+    
+    public boolean delete(AssessmentRun arun) {
+        String url = createURL("assessment_runs/" + arun.getIdentifierString()); 
+        MyResponse myResponse = getClient().delete(url);
+        AssessmentRun result = fromJSON(myResponse.json);
+        if (result != null) {
+        		return true;
+        }else{
+        		return false;
+        }
+    }
 }
+

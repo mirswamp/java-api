@@ -9,6 +9,8 @@ import org.continuousassurance.swamp.session.MyResponse;
 import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.util.ConversionMapImpl;
 
+import edu.uiuc.ncsa.security.storage.data.ConversionMap;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -72,16 +74,18 @@ public class RunRequestHandler<T extends RunRequest> extends AbstractHandler<Run
     }
     public boolean submitOneTimeRequest(Collection<AssessmentRun> aRuns, boolean notifyWhenDone){
         String url = createURL("run_requests/one-time");
-        HashMap<String, Object> parameters = new HashMap<>();
+        ConversionMapImpl parameters = new ConversionMapImpl();
         if(notifyWhenDone) {
             parameters.put("notify-when-done", "true");
         }
+        
         JSONArray uuids = new JSONArray();
         for(AssessmentRun arun : aRuns){
             uuids.add(arun.getUUIDString());
         }
-        parameters.put("assessment-run-uuids[]", uuids);
-        MyResponse myResponse = getClient().rawPost(url, parameters);
+        parameters.put("assessment-run-uuids", uuids);
+        
+        MyResponse myResponse = getClient().rawPost(url, mapToJSON(parameters));
 
         if (myResponse.jsonArray != null){
         	return true;

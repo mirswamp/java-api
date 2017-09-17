@@ -63,9 +63,11 @@ public class PlatformVersion extends SwampThing {
 		
 		public String toString () {
 			if (this == Bits.BITS_32){
-				return "32-bit";
+				//return "32-bit";
+				return "32";
 			}else {
-				return "64-bit";
+				//return "64-bit";
+				return "64";
 			}
 		}
 	}
@@ -83,10 +85,86 @@ public class PlatformVersion extends SwampThing {
 	}
 	
 	public void standardize() {
+		
+		switch(getFullName()) {
+		case ("Android Android on Ubuntu 12.04 64-bit"):
+			standardize("Android-Ubuntu", "12.04", Bits.BITS_64);
+		break;
+		case ("CentOS 5 32-bit"):
+			standardize("CentOS", "5", Bits.BITS_32);
+		break;
+		case ("CentOS 5 64-bit"):
+			standardize("CentOS", "5", Bits.BITS_64);
+		break;
+		case ("CentOS 6 32-bit"):
+			standardize("CentOS", "6", Bits.BITS_32);
+		break;
+		case ("CentOS 6 64-bit"):
+			standardize("CentOS", "6", Bits.BITS_64);
+		break;
+		case ("Debian 7 64-bit"):
+			standardize("Debian", "7", Bits.BITS_64);
+		break;
+		case ("Debian 8 64-bit"):
+			standardize("Debian", "8", Bits.BITS_64);
+		break;
+		case ("Fedora 18 64-bit"):
+			standardize("Fedora", "18", Bits.BITS_64);
+		break;
+		case ("Fedora 19 64-bit"):
+			standardize("Fedora", "19", Bits.BITS_64);
+		break;
+		case ("Fedora 20 64-bit"):
+			standardize("Fedora", "20", Bits.BITS_64);
+		break;
+		case ("Fedora 21 64-bit"):
+			standardize("Fedora", "21", Bits.BITS_64);
+		break;
+		case ("Fedora 22 64-bit"):
+			standardize("Fedora", "22", Bits.BITS_64);
+		break;
+		case ("Fedora 23 64-bit"):
+			standardize("Fedora", "23", Bits.BITS_64);
+		break;
+		case ("Fedora 24 64-bit"):
+			standardize("Fedora", "24", Bits.BITS_64);
+		break;
+		case ("Scientific 5 32-bit"):
+			standardize("Scientific", "5.11", Bits.BITS_32);
+		break;
+		case ("Scientific 5 64-bit"):
+			standardize("Scientific", "5", Bits.BITS_64);
+		break;
+		case ("Scientific 6 32-bit"):
+			standardize("Scientific", "6", Bits.BITS_32);
+		break;
+		case ("Scientific 6 64-bit"):
+			standardize("Scientific", "6", Bits.BITS_64);
+		break;
+		case ("Ubuntu 10.04 64-bit"):
+			standardize("Ubuntu", "10.04", Bits.BITS_64);
+		break;
+		case ("Ubuntu 12.04 64-bit"):
+			standardize("Ubuntu", "12.04", Bits.BITS_64);
+		break;
+		case ("Ubuntu 14.04 64-bit"):
+			standardize("Ubuntu", "14.04", Bits.BITS_64);
+		break;
+		case ("Ubuntu 16.04 64-bit"):
+			standardize("Ubuntu", "16.04", Bits.BITS_64);
+		break;
+		default:
+			System.out.println("Unknown " + getFullName());
+			standardize(getFullName(), "", Bits.BITS_64);
+			break;
+		}
+	}
+
+	public void standardize_old() {
 
 		switch(getFullName()) {
 		case ("Android Android on Ubuntu 12.04 64-bit"):
-			standardize("Android Ubuntu", "12.04", Bits.BITS_64);
+			standardize("Android-Ubuntu", "12.04", Bits.BITS_64);
 		break;
 		case ("CentOS Linux 5 32-bit 5.11 32-bit"):
 			standardize("CentOS", "5.11", Bits.BITS_32);
@@ -134,16 +212,16 @@ public class PlatformVersion extends SwampThing {
 			standardize("RHEL", "6.7", Bits.BITS_64);
 		break;
 		case ("Scientific Linux 5 32-bit 5.11 32-bit"):
-			standardize("Scientific Linux", "5.11", Bits.BITS_32);
+			standardize("Scientific", "5.11", Bits.BITS_32);
 		break;
 		case ("Scientific Linux 5 64-bit 5.11 64-bit"):
-			standardize("Scientific Linux", "5.11", Bits.BITS_64);
+			standardize("Scientific", "5.11", Bits.BITS_64);
 		break;
 		case ("Scientific Linux 6 32-bit 6.7 32-bit"):
-			standardize("Scientific Linux", "6.7", Bits.BITS_32);
+			standardize("Scientific", "6.7", Bits.BITS_32);
 		break;
 		case ("Scientific Linux 6 64-bit 6.7 64-bit"):
-			standardize("Scientific Linux", "6.7", Bits.BITS_64);
+			standardize("Scientific", "6.7", Bits.BITS_64);
 		break;
 		case ("Ubuntu Linux 10.04 LTS 64-bit Lucid Lynx"):
 			standardize("Ubuntu", "10.04", Bits.BITS_64);
@@ -175,7 +253,7 @@ public class PlatformVersion extends SwampThing {
 	}
 
 	public String getDisplayString() {
-		return String.format("%s %s %s", getShortName(), getVersion(), getBits());
+		return String.format("%s-%s-%s", getShortName().toLowerCase(), getVersion(), getBits());
 	}
 	
 	public String toString() {

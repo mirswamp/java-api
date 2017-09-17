@@ -202,7 +202,7 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         //PackageVersion packageVersion = (PackageVersion) super.create(map); // STEP 3
         // set sharing record-- STEP 4
         if (map.containsKey("project_uuid")) {
-            setVersionSharingStatus(packageVersion, map.getString("project_uuid"));
+        	setVersionSharingStatus(packageVersion, map.getString("project_uuid"));
         }
         packageVersion.setPackageThing(packageThing);
         packageVersion.setFileHandle(fileHandle);
@@ -218,15 +218,34 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
      */
     public void setVersionSharingStatus(PackageVersion packageVersion, String project_uuid) {
         HashMap<String, Object> addMap = new HashMap<>();
-        addMap.put("projects[0][project_uid]", project_uuid);
+        //addMap.put("projects[0][project_uid]", project_uuid);
+        addMap.put("project_uuids[]", project_uuid);   //2017-06-13 This is the new format
         try {
             getClient().rawPut(createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"), addMap);
         } catch (NoJSONReturnedException x) {
             // rock on. This one method does not return JSON.
         }
-
     }
 
+    /**
+     * Sets the sharing record for the given version. This record associates the package with a project
+     * and a failure to set the sharing record means that, in effect, this version does not exist.
+     *
+     *When a package can be part of multiple projects
+     * @param packageVersion
+     * @param project_uuids
+     */      
+    public void setVersionSharingStatus(PackageVersion packageVersion, List<String> project_uuids) {
+    	ConversionMapImpl map = new ConversionMapImpl();
+        map.put("project_uuids", project_uuids);
+        try {
+            getClient().rawPut(createURL("packages/versions/" + packageVersion.getUUIDString() + "/sharing"), 
+            		mapToJSON(map));
+        } catch (NoJSONReturnedException x) {
+            // rock on. This one method does not return JSON.
+        }
+    }
+    
     /**
      * Gets all the projects shared with this package version.
      * @param packageVersion
@@ -245,4 +264,29 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         }
         return projects;
     }
+    
+    /**
+     * Sets the sharing record for the given version. This record associates the package with a project
+     * and a failure to set the sharing record means that, in effect, this version does not exist.
+     *
+     *When a package can be part of multiple projects
+     * @param packageVersion
+     * @param project_uuids
+     */      
+    public void addPackageVersionDependencies(PackageVersion packageVersion, ConversionMapImpl dep_map) {
+        try {
+        	for (String plat_ver_uuid : dep_map.keySet()) {
+        		ConversionMapImpl new_map = new ConversionMapImpl();
+        		new_map.put("package_version_uuid", packageVersion.getIdentifierString());
+        		new_map.put("dependency_list", dep_map.get(plat_ver_uuid));
+        		new_map.put("platform_version_uuid", plat_ver_uuid);
+        		getClient().rawPost(createURL("packages/versions/dependencies"), 
+        				mapToJSON(new_map));
+        	}
+        } catch (NoJSONReturnedException x) {
+            // rock on. This one method does not return JSON.
+        	throw x;
+        }
+    }
+
 }

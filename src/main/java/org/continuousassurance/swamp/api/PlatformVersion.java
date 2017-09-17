@@ -154,7 +154,8 @@ public class PlatformVersion extends SwampThing {
 			standardize("Ubuntu", "16.04", Bits.BITS_64);
 		break;
 		default:
-			System.out.println("Unknown" + getFullName());
+			System.out.println("Unknown " + getFullName());
+			standardize(getFullName(), "", Bits.BITS_64);
 			break;
 		}
 	}

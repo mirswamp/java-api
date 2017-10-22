@@ -73,6 +73,30 @@ public class AssessmentRun extends SwampThing{
         this.tool = tool;
     }
 
+    public String getPackageName() {
+        return getConversionMap().getString("package_name");
+    }
+    
+    public String getPackageVersion() {
+        return getConversionMap().getString("package_version_string");
+    }
+    
+    public String getToolName() {
+        return getConversionMap().getString("tool_name");
+    }
+    
+    public String getToolVersion() {
+        return getConversionMap().getString("tool_version_string");
+    }
+
+    public String getPlatformName() {
+        return getConversionMap().getString("platform_name");
+    }
+    
+    public String getPlatformVersion() {
+        return getConversionMap().getString("platform_version_string");
+    }
+    
     Project project;
     PackageThing pkg;
     Platform platform;

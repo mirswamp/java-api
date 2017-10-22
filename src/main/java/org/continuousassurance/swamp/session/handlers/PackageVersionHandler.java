@@ -288,5 +288,17 @@ public class PackageVersionHandler<T extends PackageVersion> extends AbstractHan
         	throw x;
         }
     }
+    
+    public boolean deletePackageVersion(PackageVersion package_version)  {
+    		MyResponse mr = null;
+    		mr = getClient().delete(createURL("packages/versions/" + package_version.getUUIDString()));
+    	//if (mr.getHttpResponseCode() == HttpStatus.SC_OK) {
+    	// This is incorrect, the setHttpResponseCode is not called to set the actual error 
+    		if (mr.getHttpResponseCode() == 0) {
+    			return true;
+    		}else {
+    			return false;
+    		}
+    }
 
 }

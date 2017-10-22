@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.continuousassurance.swamp.session.handlers.PlatformHandler.PLATFORM_UUID_KEY;
-import static org.continuousassurance.swamp.session.handlers.ToolHandler.TOOL_UUID_KEY;
-
 /**
  * <p>Created by Jeff Gaynor<br>
  * on 12/10/14 at  11:00 AM
@@ -65,8 +62,8 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("project_uuid", project.getUUIDString());
         parameters.put(PackageHandler.PACKAGE_UUID_KEY, pkg.getUUIDString());
-        parameters.put(PLATFORM_UUID_KEY, platform.getUUIDString());
-        parameters.put(TOOL_UUID_KEY, tool.getUUIDString());
+        parameters.put(PlatformHandler.PLATFORM_UUID_KEY, platform.getUUIDString());
+        parameters.put(ToolHandler.TOOL_UUID_KEY, tool.getUUIDString());
         MyResponse myResponse = getClient().rawPost(url, parameters);
         AssessmentRun result = fromJSON(myResponse.json);
         result.setProject(project);
@@ -82,8 +79,8 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         parameters.put("project_uuid", project.getUUIDString());
         parameters.put("package_version_uuid", pkg_ver.getUUIDString());
         parameters.put(PackageHandler.PACKAGE_UUID_KEY, pkg_ver.getPackageThing().getUUIDString());
-        parameters.put(PLATFORM_UUID_KEY, platform.getUUIDString());
-        parameters.put(TOOL_UUID_KEY, tool.getUUIDString()); 
+        parameters.put(PlatformHandler.PLATFORM_UUID_KEY, platform.getUUIDString());
+        parameters.put(ToolHandler.TOOL_UUID_KEY, tool.getUUIDString()); 
         //parameters.put("tool_version_uuid", tool.getUUIDString());
         MyResponse myResponse = getClient().rawPost(url, parameters);
         AssessmentRun result = fromJSON(myResponse.json);
@@ -103,7 +100,7 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         //parameters.put(PLATFORM_UUID_KEY, platform_version.getUUIDString());
         parameters.put(PlatformVersion.PLATFORM_UUID_KEY, platform_version.getPlatform().getUUIDString());
         parameters.put(PlatformVersion.PLATFORM_VERSION_UUID_KEY, platform_version.getUUIDString());
-        parameters.put(TOOL_UUID_KEY, tool.getUUIDString()); 
+        parameters.put(ToolHandler.TOOL_UUID_KEY, tool.getUUIDString()); 
         //parameters.put("tool_version_uuid", tool.getUUIDString());
         MyResponse myResponse = getClient().rawPost(url, parameters);
         AssessmentRun result = fromJSON(myResponse.json);
@@ -136,8 +133,8 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         ArrayList<T> assessments = new ArrayList<>();
         for (int i = 0; i < mr.jsonArray.size(); i++) {
             JSONObject jo = mr.jsonArray.getJSONObject(i);
+            T a = fromJSON(jo); //(T) new AssessmentRun(getSession());
             Object v = jo.get(ASSESSMENT_RUN_UUID); // this is actually the uuid of the assessment run.
-            T a = (T) new AssessmentRun(getSession());
             a.setIdentifier(SWAMPIdentifiers.toIdentifier(v.toString()));
             a.setProject(project);
             assessments.add(a);
@@ -164,9 +161,15 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         T a = (T) new AssessmentRun(getSession());
         ConversionMapImpl map = new ConversionMapImpl();
         String[] uAttrib = {ASSESSMENT_RUN_UUID, PROJECT_UUID,
-                PackageHandler.PACKAGE_UUID_KEY, PACKAGE_VERSION_UUID, TOOL_UUID_KEY, TOOL_VERSION_UUID,
-                PLATFORM_VERSION_UUID, PLATFORM_UUID_KEY};
+                PackageHandler.PACKAGE_UUID_KEY, PACKAGE_VERSION_UUID, ToolHandler.TOOL_UUID_KEY, TOOL_VERSION_UUID,
+                PLATFORM_VERSION_UUID, PlatformHandler.PLATFORM_UUID_KEY};
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
+        
+        String[] nAttrib = {"package_name", "package_version_string", 
+        		"tool_name", "tool_version_string", 
+        		"platform_name", "platform_version_string"};
+        setAttributes(map, nAttrib, json, DATA_TYPE_STRING);
+        
         a.setConversionMap(map);
         return a;
     }

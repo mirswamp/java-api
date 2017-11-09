@@ -90,7 +90,7 @@
         <artifactId>maven-gpg-plugin</artifactId>
         <version>1.5</version>
         <configuration>
-          <skip>true</skip>
+          <skip>false</skip>
         </configuration>
         <executions>
           <execution>

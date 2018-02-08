@@ -43,7 +43,8 @@ public class SWAMPServiceEnvironment extends AbstractEnvironment {
                                    String username,
                                    String password,
                                    Map<String, String> headers,
-                                   SSLConfiguration sslConfiguration
+                                   SSLConfiguration sslConfiguration,
+                                   Proxy proxy
     ) {
         this.csaAddress = csaAddress;
         this.headers = headers;
@@ -51,8 +52,19 @@ public class SWAMPServiceEnvironment extends AbstractEnvironment {
         this.rwsAddress = rwsAddress;
         this.username = username;
         this.sslConfiguration = sslConfiguration;
+        this.proxy = proxy;
     }
 
+
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
+    }
+
+    Proxy proxy;
     /**
      * This can only be invoked once the class has been created with all of the correct arguments.
      *

@@ -127,11 +127,11 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         // the rest of the information.
         for (int i = 0; i < mr.jsonArray.size(); i++) {
             JSONObject json = mr.jsonArray.getJSONObject(i);
-            String uuid = json.getString(PACKAGE_UUID_KEY);
-            String url = createURL("packages/" + uuid);
-            MyResponse mr2 = getClient().rawGet(url, null);
-
-            pkgs.add(fromJSON(mr2.json));
+            //String uuid = json.getString(PACKAGE_UUID_KEY);
+            //String url = createURL("packages/" + uuid);
+            //MyResponse mr2 = getClient().rawGet(url, null);
+            //pkgs.add(fromJSON(mr2.json));
+            pkgs.add(fromJSON(json));
         }
         return pkgs;
     }
@@ -157,11 +157,11 @@ public class PackageHandler<T extends PackageThing> extends AbstractHandler<T> {
         // the rest of the information.
         for (int i = 0; i < mr.jsonArray.size(); i++) {
             JSONObject json = mr.jsonArray.getJSONObject(i);
-            String uuid = json.getString(PACKAGE_UUID_KEY);
-            String url = createURL("packages/" + uuid);
-            MyResponse mr2 = getClient().rawGet(url, null);
-
-            pkgs.add(fromJSON(mr2.json));
+            //String uuid = json.getString(PACKAGE_UUID_KEY);
+            //String url = createURL("packages/" + uuid);
+            //MyResponse mr2 = getClient().rawGet(url, null);
+            //pkgs.add(fromJSON(mr2.json));
+            pkgs.add(fromJSON(json));
         }
         return pkgs;
     }

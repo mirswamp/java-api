@@ -23,6 +23,10 @@ public interface SWAMPConfigTags extends ConfigurationTags {
     public static final String HOST_HEADER_TAG = "host";
     public static final String USERNAME_TAG = "username";
     public static final String PASSWORD_TAG = "password";
+    public static final String PROXY_TAG = "proxy";
+    public static final String PROXY_PORT_TAG = "port";
+    public static final String PROXY_HOST_TAG = "host";
+    public static final String PROXY_SCHEME_TAG = "scheme";
 
 
 }

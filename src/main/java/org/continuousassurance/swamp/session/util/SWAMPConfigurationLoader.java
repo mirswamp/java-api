@@ -59,11 +59,15 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
             if(kids.isEmpty()){
                 proxy.configured = false;
             }else{
-
-                ConfigurationNode proxyNode = (ConfigurationNode) kids.get(0);
-                proxy.host = Configurations.getNodeValue(proxyNode, PROXY_HOST_TAG, "");
-                proxy.scheme = Configurations.getNodeValue(proxyNode, PROXY_SCHEME_TAG, "");
-                proxy.port = Integer.parseInt(Configurations.getNodeValue(proxyNode, PROXY_PORT_TAG, "-1"));
+                try {
+                    ConfigurationNode proxyNode = (ConfigurationNode) kids.get(0);
+                    proxy.host = Configurations.getNodeValue(proxyNode, PROXY_HOST_TAG, "");
+                    proxy.scheme = Configurations.getNodeValue(proxyNode, PROXY_SCHEME_TAG, "");
+                    proxy.port = Integer.parseInt(Configurations.getNodeValue(proxyNode, PROXY_PORT_TAG, "-1"));
+                    proxy.configured = true;
+                }catch(Throwable t){
+                    myLogger.error("There was an error encountered attempting to parse the proxy configuration: \"" + t.getMessage() + "\". No proxy support!", t);
+                }
             }
 
 
@@ -141,13 +145,13 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
      * @param serverURL
      * @return
      */
-    public static String getServerVersion(String serverURL){
+    public String getServerVersion(String serverURL){
         if(!serverURL.endsWith("/")){
               serverURL = serverURL + "/";
           }
           SSLConfiguration sslConfiguration = new SSLConfiguration();
           sslConfiguration.setUseDefaultJavaTrustStore(true);
-          SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration);
+          SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration, getProxy());
           MyResponse raw = client.rawGet(serverURL + "config/config.json");
           String version = null;
           if(raw.hasJSON()){
@@ -162,54 +166,56 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
      * In earlier versions of the SWAMP the CSA and RWS endpoints were independent. Since about version
      * 1.25 they are now identical and since about version 1.28 can be discovered.
      *
-     * This is static so that it may be used in other contexts.
      * @param serverURL
      * @return
      */
-    public static String getWebServiceURL(String serverURL) {
-        if(!serverURL.endsWith("/")){
-            serverURL = serverURL + "/";
-        }
+    public static  String getWebServiceURL(String serverURL) {
         SSLConfiguration sslConfiguration = new SSLConfiguration();
         sslConfiguration.setUseDefaultJavaTrustStore(true);
-        SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration);
-        MyResponse raw = client.rawGet(serverURL + "config/config.json");
-        String webServerURL = null;
-        if(raw.hasJSON()){
-            if(raw.json.containsKey("servers")){
-                JSONObject servers = raw.json.getJSONObject("servers");
-                if(servers.containsKey("web")){
-                    webServerURL = servers.getString("web");
-                }
-            }
-        }
-        if(webServerURL == null){
-            return null;
-        }
-        return webServerURL;
+        Proxy proxy = new Proxy();
+        proxy.configured = false;
+        return getWebServiceURL(serverURL, sslConfiguration, proxy);
+
     }
-    
-    public static String getWebServiceURL(String serverURL, SSLConfiguration sslConfiguration) {
+
+
+    /**
+     * This will try to get the webs service url using a proxy. If there is a configuration loaded, then
+     * this loader should have it and you can get it using the {@link #getProxy()} method here.
+     * @param serverURL
+     * @param sslConfiguration
+     * @param proxy
+     * @return
+     */
+    public  static String getWebServiceURL(String serverURL,
+                                           SSLConfiguration sslConfiguration,
+                                           Proxy proxy) {
         if(!serverURL.endsWith("/")){
-            serverURL = serverURL + "/";
-        }
-        
-        //sslConfiguration.setUseDefaultJavaTrustStore(true);
-        SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration);
-        MyResponse raw = client.rawGet(serverURL + "config/config.json");
-        String webServerURL = null;
-        if(raw.hasJSON()){
-            if(raw.json.containsKey("servers")){
-                JSONObject servers = raw.json.getJSONObject("servers");
-                if(servers.containsKey("web")){
-                    webServerURL = servers.getString("web");
+                serverURL = serverURL + "/";
+            }
+
+            //sslConfiguration.setUseDefaultJavaTrustStore(true);
+            SWAMPHttpClient client = new SWAMPHttpClient(serverURL,sslConfiguration, proxy);
+            MyResponse raw = client.rawGet(serverURL + "config/config.json");
+            String webServerURL = null;
+            if(raw.hasJSON()){
+                if(raw.json.containsKey("servers")){
+                    JSONObject servers = raw.json.getJSONObject("servers");
+                    if(servers.containsKey("web")){
+                        webServerURL = servers.getString("web");
+                    }
                 }
             }
-        }
-        if(webServerURL == null){
-            return null;
-        }
-        return webServerURL;
+            if(webServerURL == null){
+                return null;
+            }
+            return webServerURL;
+
+    }
+    public  static String getWebServiceURL(String serverURL, SSLConfiguration sslConfiguration) {
+       Proxy proxy = new Proxy();
+        proxy.configured = false;
+        return getWebServiceURL(serverURL, sslConfiguration, proxy);
     }
 
 

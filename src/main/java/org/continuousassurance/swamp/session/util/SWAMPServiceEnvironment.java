@@ -80,7 +80,8 @@ public class SWAMPServiceEnvironment extends AbstractEnvironment {
                     getHeaders().get(SWAMPConfigTags.HOST_HEADER_TAG),
                     getUsername(),
                     getPassword(),
-                    sslConfiguration
+                    sslConfiguration,
+                    getProxy()
             );
         }
         return handlerFactory;

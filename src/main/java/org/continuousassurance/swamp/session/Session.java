@@ -1,9 +1,9 @@
 package org.continuousassurance.swamp.session;
 
+import org.apache.http.cookie.Cookie;
+import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
 import org.continuousassurance.swamp.session.handlers.UserHandler;
 import org.continuousassurance.swamp.session.util.SWAMPServiceEnvironment;
-import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
-import org.apache.http.cookie.Cookie;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -47,13 +47,13 @@ public class Session implements Serializable, Cloneable {
     private String csaSessionKey;
 
     /**
-     * Constructor.
+     * The constructor. You must set the {@link SWAMPHttpClient} before using this session.
      *
      * @param host String with the host name.
      */
     public Session(String host) {
         setHost(host);
-        client = new SWAMPHttpClient(this.host);
+      //  client = new SWAMPHttpClient(this.host);
         sessionActive = false;
     }
 
@@ -77,7 +77,7 @@ public class Session implements Serializable, Cloneable {
      * @param host         The name of the host.
      * @param otherSession The other session object that we are copying.
      */
-    public Session(String host, Session otherSession) {
+    public Session(String host,  Session otherSession) {
         this(host);
         setState(otherSession);
     }

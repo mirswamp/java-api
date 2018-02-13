@@ -1,10 +1,11 @@
 package org.continuousassurance.swamp.util;
 
-import org.continuousassurance.swamp.session.Session;
 import edu.uiuc.ncsa.security.util.ssl.SSLConfiguration;
-import org.continuousassurance.swamp.session.SWAMPHttpClient;
 import org.continuousassurance.swamp.api.*;
+import org.continuousassurance.swamp.session.SWAMPHttpClient;
+import org.continuousassurance.swamp.session.Session;
 import org.continuousassurance.swamp.session.handlers.*;
+import org.continuousassurance.swamp.session.util.Proxy;
 
 public class HandlerFactoryUtil {
     // Production addresses and headers
@@ -36,9 +37,10 @@ public class HandlerFactoryUtil {
                                     String refererHeader,
                                     String username,
                                     String password,
-                                    SSLConfiguration sslConfiguration) {
+                                    SSLConfiguration sslConfiguration,
+                                    Proxy proxy) {
 
-        return realLogon(host,hostHeader,originHeader,refererHeader,username, password, false, sslConfiguration);
+        return realLogon(host,hostHeader,originHeader,refererHeader,username, password, false, sslConfiguration,proxy);
     }
 
     public static Session realLogon(String host,
@@ -48,9 +50,10 @@ public class HandlerFactoryUtil {
                                     String username,
                                     String password,
                                     boolean requireSecureCookies,
-                                    SSLConfiguration sslConfiguration) {
+                                    SSLConfiguration sslConfiguration,
+                                    Proxy proxy) {
         Session session = new Session(host);
-        session.setClient(new SWAMPHttpClient(host, sslConfiguration));
+        session.setClient(new SWAMPHttpClient(host, sslConfiguration, proxy));
         session.getClient().setHostHeader(hostHeader);
         session.getClient().setOriginHeader(originHeader);
         session.getClient().setRefererHeader(refererHeader);
@@ -59,6 +62,62 @@ public class HandlerFactoryUtil {
         return session;
     }
 
+    /**
+     * This will create a session without a proxy.
+     * @param host
+     * @param hostHeader
+     * @param originHeader
+     * @param refererHeader
+     * @param username
+     * @param password
+     * @param requireSecureCookies
+     * @param sslConfiguration
+     * @return
+     */
+    public static Session realLogon(String host,
+                                    String hostHeader,
+                                    String originHeader,
+                                    String refererHeader,
+                                    String username,
+                                    String password,
+                                    boolean requireSecureCookies,
+                                    SSLConfiguration sslConfiguration){
+     return  realLogon(host,hostHeader,originHeader,refererHeader,username,password,requireSecureCookies, sslConfiguration, null);
+    }
+
+    /**
+     * Create a handler factory with no proxy.
+     * @param rwsServer
+     * @param csaServer
+     * @param originHeader
+     * @param refererHeader
+     * @param hostHeader
+     * @param username
+     * @param password
+     * @param sslConfiguration
+     * @return
+     */
+    public static HandlerFactory createHandlerFactory(String rwsServer,
+                                                        String csaServer,
+                                                        String originHeader,
+                                                        String refererHeader,
+                                                        String hostHeader,
+                                                        String username,
+                                                        String password,
+                                                        SSLConfiguration sslConfiguration) {
+        Proxy proxy = new Proxy();
+        proxy.configured = false;
+        return createHandlerFactory(rwsServer,
+                csaServer,
+                originHeader,
+                refererHeader,
+                hostHeader,
+                username,
+                password,
+                sslConfiguration,
+                proxy);
+      }
+
     public static HandlerFactory createHandlerFactory(String rwsServer,
                                                       String csaServer,
                                                       String originHeader,
@@ -66,9 +125,10 @@ public class HandlerFactoryUtil {
                                                       String hostHeader,
                                                       String username,
                                                       String password,
-                                                      SSLConfiguration sslConfiguration) {
-        Session rwsSession = realLogon(rwsServer, hostHeader, originHeader, refererHeader, username, password, sslConfiguration);
-        Session csaSession = realLogon(csaServer, hostHeader, originHeader, refererHeader, username, password, sslConfiguration);
+                                                      SSLConfiguration sslConfiguration,
+                                                      Proxy proxy) {
+        Session rwsSession = realLogon(rwsServer, hostHeader, originHeader, refererHeader, username, password, sslConfiguration, proxy);
+        Session csaSession = realLogon(csaServer, hostHeader, originHeader, refererHeader, username, password, sslConfiguration,proxy);
 
         HandlerFactory hf = new HandlerFactory(rwsSession, csaSession);
         setHandlerFactory(hf);

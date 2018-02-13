@@ -1,7 +1,5 @@
 package org.continuousassurance.swamp.session;
 
-import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
-import org.continuousassurance.swamp.exceptions.SWAMPException;
 import edu.uiuc.ncsa.security.core.exceptions.GeneralException;
 import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.core.util.Pool;
@@ -10,12 +8,10 @@ import edu.uiuc.ncsa.security.util.ssl.VerifyingHTTPClientFactory;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -28,8 +24,12 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
+import org.continuousassurance.swamp.exceptions.SWAMPException;
+import org.continuousassurance.swamp.session.util.Proxy;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -58,6 +58,13 @@ public class SWAMPHttpClient implements Serializable {
         }
     }
 
+    Proxy proxy = null;
+
+    /*
+        public Proxy getProxy(){
+            get
+        }
+    */
     public class MyPool<T extends HttpClient> extends Pool<T> implements Serializable {
         public MyPool() {
         }
@@ -112,9 +119,15 @@ public class SWAMPHttpClient implements Serializable {
     }
 
 
-    public SWAMPHttpClient(String host, SSLConfiguration sslConfiguration) {
+    public SWAMPHttpClient(String host, SSLConfiguration sslConfiguration, Proxy proxy) {
         this.host = host;
         this.sslConfiguration = sslConfiguration;
+        if(proxy == null){
+         proxy = new Proxy();
+            proxy.configured = false;
+        }else {
+            this.proxy = proxy;
+        }
     }
 
     public static String encode(String x) throws UnsupportedEncodingException {
@@ -173,15 +186,15 @@ public class SWAMPHttpClient implements Serializable {
      * @param request
      */
     protected void setHeaders(HttpUriRequest request) {
-  //      request.setHeader("Referer", getRefererHeader());
-  //      request.setHeader("Origin", getOriginHeader());
- //       request.setHeader("Host", getHostHeader());
+        //      request.setHeader("Referer", getRefererHeader());
+        //      request.setHeader("Origin", getOriginHeader());
+        //       request.setHeader("Host", getHostHeader());
         request.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
         //request.setHeader("Accept", "*/*");
-   //     request.setHeader("Accept-Language", "en-US, en;q=0.5");
-   //     request.setHeader("Accept-Encoding", "gzip, deflate");
+        //     request.setHeader("Accept-Language", "en-US, en;q=0.5");
+        //     request.setHeader("Accept-Encoding", "gzip, deflate");
         //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-   //     request.setHeader("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0 Jeff-test/edu.uiuc.ncsa.swamp.test");
+        //     request.setHeader("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0 Jeff-test/edu.uiuc.ncsa.swamp.test");
     }
 
     /**
@@ -208,7 +221,57 @@ public class SWAMPHttpClient implements Serializable {
     public MyResponse rawGet(String url, Map<String, Object> map) {
         return rawGet(url, map, false);
     }
+    public class Stuff{
+        public Stuff(String url, Map<String, Object> map, int action) {
+            doStuff(url, map, action);
+        }
 
+        public static final int DO_GET = 1;
+        public static final int DO_POST = 10;
+        public static final int DO_PUT = 100;
+        public static final int DO_DELETE = 1000;
+        public void doStuff(String url, Map<String, Object> map, int action){
+            if (map != null) {
+                nvp = convertMap(map);
+            }
+            URI parsedURI = URI.create(url);
+            switch(action){
+                case DO_GET:
+                    request =  new HttpGet(parsedURI.getPath());
+                    break;
+                case DO_PUT:
+                    request = new HttpPut(parsedURI.getPath());
+                    break;
+                case DO_POST:
+                    request = new HttpPost(parsedURI.getPath());
+                    break;
+                case DO_DELETE:
+                    request = new HttpDelete(parsedURI.getPath());
+                    break;
+                default:
+                    throw new GeneralException("Error: unknown/unsupported HTTP method");
+
+            }
+            target = new HttpHost(parsedURI.getHost(), parsedURI.getPort(), parsedURI.getScheme());
+            if (proxy.configured) {
+                HttpHost proxy1 = new HttpHost(proxy.host, proxy.port, proxy.scheme);
+                RequestConfig config = RequestConfig.custom()
+                        .setProxy(proxy1)
+                        .build();
+                setHeaders(request);
+
+                request.setConfig(config);
+            } else {
+                setHeaders(request);
+            }
+
+        }
+
+        HttpHost target;
+        HttpRequestBase request;
+        List<NameValuePair> nvp;
+
+    }
 
     /**
      * Returns the response as a stream in the {@link MyResponse} object;
@@ -219,18 +282,11 @@ public class SWAMPHttpClient implements Serializable {
      * @return
      */
     public MyResponse rawGet(String url, Map<String, Object> map, boolean isStreamable) {
-        if (map != null) {
-            List<NameValuePair> nvp = convertMap(map);
-        }
-        //say(this, "url = " + url);
-        HttpGet get = new HttpGet(url);
-        setHeaders(get);
-        //get.setHeader("Accept", "application/json, text/javascript, /; q=0.01");
+        Stuff stuff = new Stuff(url, map, Stuff.DO_GET);
         HttpClient client = clientPool.pop();
-        HttpResponse response = null;
 
         try {
-            response = client.execute(get, getContext());
+            HttpResponse response = client.execute(stuff.target, stuff.request, getContext());
             HttpEntity entity = response.getEntity();
             JSON json = null;
             List<Cookie> cookies = getContext().getCookieStore().getCookies();
@@ -288,9 +344,8 @@ public class SWAMPHttpClient implements Serializable {
      * @return
      */
     public File getFile(String url, File targetDir, String targetName) {
-        HttpGet get = new HttpGet(url);
-        setHeaders(get);
-        get.setHeader("Accept", "application/json, text/javascript, /; q=0.01");
+        Stuff stuff = new Stuff(url, null, Stuff.DO_GET);
+        stuff.request.setHeader("Accept", "application/json, text/javascript, /; q=0.01");
         HttpResponse response = null;
 
         try {
@@ -303,7 +358,7 @@ public class SWAMPHttpClient implements Serializable {
             }
             HttpClient client = clientPool.pop();
 
-            response = client.execute(get, getContext());
+            response = client.execute(stuff.target, stuff.request, getContext());
             HttpEntity entity1 = response.getEntity();
 
             if (entity1 == null) {
@@ -358,26 +413,24 @@ public class SWAMPHttpClient implements Serializable {
                                      String url,
                                      Map<String, Object> map,
                                      List<File> files) {
-        HttpUriRequest req;
         HttpClient client = clientPool.pop();
-
+        Stuff stuff = null;
         if (doPost) {
-            HttpPost post = new HttpPost(url);
-            setHeaders(post);
+            stuff = new Stuff(url, map, Stuff.DO_POST);
+            HttpPost post = (HttpPost) stuff.request;
             try {
                 if (map instanceof JSONObject) {
-                	
+
                     //DebugUtil.say(this, ".makeRequest: got to json");
-                    
-                	JSONObject json = (JSONObject) map;
-                    
-                	//DebugUtil.say(this, ".makeRequest: json=" + json);
-                    
-                	StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
+
+                    JSONObject json = (JSONObject) map;
+
+                    //DebugUtil.say(this, ".makeRequest: json=" + json);
+
+                    StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                     entity.setContentType("application/json");
                     post.setEntity(entity);
                 } else {
-                    //UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity("username=Jeff+Gaynor&password=aaaaaAAAAA1");
                     UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(convertMap(map));
                     urlEncodedFormEntity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
 
@@ -391,9 +444,12 @@ public class SWAMPHttpClient implements Serializable {
             if (files != null && !files.isEmpty()) {
                 post = getHttpPost(post, map, files, client);
             }
-            req = post;
+            //req = post;
         } else {
-            HttpPut put = new HttpPut(url);
+            //HttpPut put = new HttpPut(url);
+            stuff = new Stuff(url, map, Stuff.DO_PUT);
+
+            HttpPut put = (HttpPut)stuff.request;
             setHeaders(put);
             try {
                 UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(convertMap(map));
@@ -403,14 +459,13 @@ public class SWAMPHttpClient implements Serializable {
             } catch (UnsupportedEncodingException usx) {
                 throw new SWAMPException("Unsupported encoding", usx);
             }
-            req = put;
-            req.setHeader("Accept", "application/json, text/javascript, /; q=0.01");
-
+            put.setHeader("Accept", "application/json, text/javascript, /; q=0.01");
         }
         HttpResponse response = null;
         try {
             try {
-                response = client.execute(req, getContext());
+                //response = client.execute(req, getContext());
+                response = client.execute(stuff.target, stuff.request, getContext());
                 if (response == null) {
                     releaseConnection(client, response);
                     throw new GeneralException("Error: null response from server. Do you have an internet connection?");
@@ -473,14 +528,14 @@ public class SWAMPHttpClient implements Serializable {
     }
 
     public MyResponse delete(String url) {
-        HttpDelete req = new HttpDelete(url);
-        req.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+        Stuff stuff = new Stuff(url, null, Stuff.DO_DELETE);
+        stuff.request.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
         HttpClient client = clientPool.pop();
         HttpResponse response = null;
 
         try {
             try {
-                response = client.execute(req, getContext());
+                response = client.execute(stuff.target, stuff.request, getContext());
             } catch (Throwable t) {
                 t.printStackTrace();
             }

@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.continuousassurance.swamp</groupId>
   <artifactId>java-api</artifactId>
-  <version>1.4</version>
+  <version>1.5-SNAPSHOT</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -90,7 +90,7 @@
         <artifactId>maven-gpg-plugin</artifactId>
         <version>1.5</version>
         <configuration>
-          <skip>false</skip>
+          <skip>true</skip>
         </configuration>
         <executions>
           <execution>

@@ -106,7 +106,7 @@ public class HandlerFactoryUtil {
                                                         String password,
                                                         SSLConfiguration sslConfiguration) {
         Proxy proxy = new Proxy();
-        proxy.configured = false;
+        //proxy.configured = false;
         return createHandlerFactory(rwsServer,
                 csaServer,
                 originHeader,

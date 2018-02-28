@@ -48,7 +48,8 @@ public class SWAMPHttpClient implements Serializable {
     transient private HttpClientContext context;
     private SSLConfiguration sslConfiguration;
     private String host;
-
+    private Proxy proxy = null;
+    
     private String refererHeader;
     private String originHeader;
     private String hostHeader;
@@ -57,8 +58,6 @@ public class SWAMPHttpClient implements Serializable {
         public MySSLConfiguration() {
         }
     }
-
-    Proxy proxy = null;
 
     /*
         public Proxy getProxy(){
@@ -123,8 +122,8 @@ public class SWAMPHttpClient implements Serializable {
         this.host = host;
         this.sslConfiguration = sslConfiguration;
         if(proxy == null){
-         proxy = new Proxy();
-            proxy.configured = false;
+        		proxy = new Proxy();
+            //proxy.configured = false;
         }else {
             this.proxy = proxy;
         }
@@ -222,6 +221,10 @@ public class SWAMPHttpClient implements Serializable {
         return rawGet(url, map, false);
     }
     public class Stuff{
+        HttpHost target;
+        HttpRequestBase request;
+        List<NameValuePair> nvp;
+
         public Stuff(String url, Map<String, Object> map, int action) {
             doStuff(url, map, action);
         }
@@ -266,10 +269,6 @@ public class SWAMPHttpClient implements Serializable {
             }
 
         }
-
-        HttpHost target;
-        HttpRequestBase request;
-        List<NameValuePair> nvp;
 
     }
 

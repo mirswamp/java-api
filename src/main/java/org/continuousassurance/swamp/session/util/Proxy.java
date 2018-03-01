@@ -7,10 +7,12 @@ import java.io.Serializable;
  * on 2/8/18 at  10:02 AM
  */
 public class Proxy implements Serializable{
-    public int port = -1;
-    public String host = "";
-    public String scheme = "";
-    public boolean configured = false;
+    private int port = -1;
+    private String host = "";
+    private String scheme = "";
+    private boolean configured = false;
+	private String username = null;
+	private String password = null;
 	
     public Proxy() {
     		this(-1, "", "", false);
@@ -22,9 +24,37 @@ public class Proxy implements Serializable{
 		this.host = host;
 		this.scheme = scheme;
 		this.configured = configured;
+		username = null;
+		password = null;
 	}
 
-	public int getPort() {
+    public Proxy(int port, String host, String scheme, String username, String password, boolean configured) {
+        super();
+        this.port = port;
+        this.host = host;
+        this.scheme = scheme;
+        this.configured = configured;
+        this.username = username;
+        this.password = password;        
+    }
+    
+	public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public int getPort() {
 		return port;
 	}
 

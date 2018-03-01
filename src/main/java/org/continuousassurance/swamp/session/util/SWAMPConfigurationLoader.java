@@ -57,14 +57,14 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
             List kids = cn.getChildren(PROXY_TAG);
             proxy = new Proxy();
             if(kids.isEmpty()){
-                proxy.configured = false;
+                proxy.setConfigured(false);
             }else{
                 try {
                     ConfigurationNode proxyNode = (ConfigurationNode) kids.get(0);
-                    proxy.host = Configurations.getNodeValue(proxyNode, PROXY_HOST_TAG, "");
-                    proxy.scheme = Configurations.getNodeValue(proxyNode, PROXY_SCHEME_TAG, "");
-                    proxy.port = Integer.parseInt(Configurations.getNodeValue(proxyNode, PROXY_PORT_TAG, "-1"));
-                    proxy.configured = true;
+                    proxy.setHost(Configurations.getNodeValue(proxyNode, PROXY_HOST_TAG, ""));
+                    proxy.setScheme(Configurations.getNodeValue(proxyNode, PROXY_SCHEME_TAG, ""));
+                    proxy.setPort(Integer.parseInt(Configurations.getNodeValue(proxyNode, PROXY_PORT_TAG, "-1")));
+                    proxy.setConfigured(true);
                 }catch(Throwable t){
                     myLogger.error("There was an error encountered attempting to parse the proxy configuration: \"" + t.getMessage() + "\". No proxy support!", t);
                 }
@@ -173,7 +173,7 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
         SSLConfiguration sslConfiguration = new SSLConfiguration();
         sslConfiguration.setUseDefaultJavaTrustStore(true);
         Proxy proxy = new Proxy();
-        proxy.configured = false;
+        proxy.setConfigured(false);
         return getWebServiceURL(serverURL, sslConfiguration, proxy);
 
     }
@@ -213,8 +213,8 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
 
     }
     public  static String getWebServiceURL(String serverURL, SSLConfiguration sslConfiguration) {
-       Proxy proxy = new Proxy();
-        proxy.configured = false;
+        Proxy proxy = new Proxy();
+        proxy.setConfigured(false);
         return getWebServiceURL(serverURL, sslConfiguration, proxy);
     }
 

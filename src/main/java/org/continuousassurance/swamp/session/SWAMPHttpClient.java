@@ -9,7 +9,10 @@ import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.http.*;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -21,6 +24,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -87,7 +91,20 @@ public class SWAMPHttpClient implements Serializable {
         public T create() {
 
             if (proxy.isConfigured()) {
-                return (T) HttpClientBuilder.create().setProxy(new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme())).build();
+                HttpHost http_proxy = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme());
+                HttpClient http_client = null;
+                
+                if (proxy.getUsername() != null && proxy.getPassword() != null) {
+                    CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                    credsProvider.setCredentials(
+                            new AuthScope(proxy.getHost(), proxy.getPort()),
+                            new UsernamePasswordCredentials(proxy.getUsername(), proxy.getPassword()));
+                    
+                    http_client = HttpClientBuilder.create().setDefaultCredentialsProvider(credsProvider).setProxy(http_proxy).build();
+                }else {
+                    http_client = HttpClientBuilder.create().setProxy(http_proxy).build();
+                }
+                return (T)http_client;
             }else {
                 try {
                     return (T) getF().getClient(host); // have to have for SSL resolution.
@@ -262,8 +279,8 @@ public class SWAMPHttpClient implements Serializable {
 
             }
             target = new HttpHost(parsedURI.getHost(), parsedURI.getPort(), parsedURI.getScheme());
-            if (proxy.configured) {
-                HttpHost proxy1 = new HttpHost(proxy.host, proxy.port, proxy.scheme);
+            if (proxy.isConfigured()) {
+                HttpHost proxy1 = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme());
                 RequestConfig config = RequestConfig.custom()
                         .setProxy(proxy1)
                         .build();

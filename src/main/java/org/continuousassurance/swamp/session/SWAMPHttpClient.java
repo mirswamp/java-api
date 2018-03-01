@@ -21,6 +21,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
@@ -84,10 +85,15 @@ public class SWAMPHttpClient implements Serializable {
 
         @Override
         public T create() {
-            try {
-                return (T) getF().getClient(host); // have to have for SSL resolution.
-            } catch (IOException e) {
-                throw new GeneralException("Error getting https-aware client");
+
+            if (proxy.isConfigured()) {
+                return (T) HttpClientBuilder.create().setProxy(new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme())).build();
+            }else {
+                try {
+                    return (T) getF().getClient(host); // have to have for SSL resolution.
+                } catch (IOException e) {
+                    throw new GeneralException("Error getting https-aware client");
+                } 
             }
         }
 

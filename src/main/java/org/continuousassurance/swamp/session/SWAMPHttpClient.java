@@ -21,7 +21,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -33,12 +32,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
 import org.continuousassurance.swamp.exceptions.SWAMPException;
 import org.continuousassurance.swamp.session.util.Proxy;
-import edu.uiuc.ncsa.security.util.ssl.MyTrustManager;
 
 import java.io.*;
 import java.net.URI;
@@ -47,13 +44,9 @@ import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -179,6 +172,7 @@ public class SWAMPHttpClient implements Serializable {
                 } catch (IOException | GeneralSecurityException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                    return null;
                 }
             }
 
@@ -187,14 +181,14 @@ public class SWAMPHttpClient implements Serializable {
             } catch (IOException | GeneralSecurityException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                return null;
             }
 
             return sslcontext;
         }
         
         //@Override
-        public T createNew() {
-            // Trust own CA and all self-signed certs
+        public T create() {
             
             if (proxy.isConfigured()) {
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
@@ -224,8 +218,8 @@ public class SWAMPHttpClient implements Serializable {
             }
         }
         
-        @Override
-        public T create() {
+        //@Override
+        public T createOld() {
             try {
                 return (T) getF().getClient(host); // have to have for SSL resolution.
             } catch (IOException e) {

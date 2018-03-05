@@ -18,6 +18,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -28,6 +30,8 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
 import org.continuousassurance.swamp.exceptions.SWAMPException;
@@ -37,9 +41,17 @@ import java.io.*;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.net.ssl.SSLContext;
 
 /**
  * <p>Created by Jeff Gaynor<br>
@@ -69,6 +81,11 @@ public class SWAMPHttpClient implements Serializable {
             get
         }
     */
+    protected SSLConfiguration getSSLConfiguration() {
+        return sslConfiguration;
+    }
+    
+    
     public class MyPool<T extends HttpClient> extends Pool<T> implements Serializable {
         public MyPool() {
         }
@@ -81,14 +98,52 @@ public class SWAMPHttpClient implements Serializable {
 
         public VerifyingHTTPClientFactory getF() {
             if (f == null) {
-                f = new VerifyingHTTPClientFactory(new MyLoggingFacade(getClass().getSimpleName()), sslConfiguration);
+                f = new VerifyingHTTPClientFactory(new MyLoggingFacade(getClass().getSimpleName()), getSSLConfiguration());
                 f.setStrictHostnames(false);
             }
             return f;
         }
-
+        
+        protected KeyStore getKeyStore() throws IOException, GeneralSecurityException {
+            
+            if (getSSLConfiguration().getKeystore() == null) {
+                return null;
+            }
+            KeyStore keyStore = KeyStore.getInstance(getSSLConfiguration().getKeystoreType());
+            File keystoreFile = new File(getSSLConfiguration().getKeystore());
+            if (!keystoreFile.exists()) {
+                throw new FileNotFoundException("Error: the keystore file \"" + keystoreFile + "\" does not exist");
+            }
+            FileInputStream fis = new FileInputStream(keystoreFile);
+            keyStore.load(fis, getSSLConfiguration().getKeystorePasswordChars());
+            fis.close();
+            
+            return keyStore;
+        }
+        
         @Override
         public T create() {
+            // Trust own CA and all self-signed certs
+            SSLContext sslcontext = null;
+            try {
+                if (getSSLConfiguration().getKeystore() == null) {
+                    SSLContextBuilder  ssl_context_builder  = SSLContextBuilder.create();
+                    ssl_context_builder.loadKeyMaterial(getKeyStore(), getSSLConfiguration().getKeystorePasswordChars());
+                    sslcontext = ssl_context_builder.build();
+                }else {
+                    sslcontext = SSLContextBuilder.create().build();
+                }
+                         
+            } catch (IOException | GeneralSecurityException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } 
+            
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                    sslcontext,
+                    new String[] { getSSLConfiguration().getTlsVersion() },
+                    null,
+                    SSLConnectionSocketFactory.getDefaultHostnameVerifier());
 
             if (proxy.isConfigured()) {
                 HttpHost http_proxy = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme());
@@ -100,9 +155,9 @@ public class SWAMPHttpClient implements Serializable {
                             new AuthScope(proxy.getHost(), proxy.getPort()),
                             new UsernamePasswordCredentials(proxy.getUsername(), proxy.getPassword()));
                     
-                    http_client = HttpClientBuilder.create().setDefaultCredentialsProvider(credsProvider).setProxy(http_proxy).build();
+                    http_client = HttpClientBuilder.create().setSSLSocketFactory(sslsf).setDefaultCredentialsProvider(credsProvider).setProxy(http_proxy).build();
                 }else {
-                    http_client = HttpClientBuilder.create().setProxy(http_proxy).build();
+                    http_client = HttpClientBuilder.create().setSSLSocketFactory(sslsf).setProxy(http_proxy).build();
                 }
                 return (T)http_client;
             }else {

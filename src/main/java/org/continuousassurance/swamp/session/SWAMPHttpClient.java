@@ -3,8 +3,10 @@ package org.continuousassurance.swamp.session;
 import edu.uiuc.ncsa.security.core.exceptions.GeneralException;
 import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.core.util.Pool;
+import edu.uiuc.ncsa.security.util.ssl.MyTrustManager;
 import edu.uiuc.ncsa.security.util.ssl.SSLConfiguration;
 import edu.uiuc.ncsa.security.util.ssl.VerifyingHTTPClientFactory;
+import edu.uiuc.ncsa.security.util.ssl.VerifyingHTTPClientFactory.X509TrustManagerFacade;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -36,6 +38,7 @@ import org.apache.http.util.EntityUtils;
 import org.continuousassurance.swamp.exceptions.NoJSONReturnedException;
 import org.continuousassurance.swamp.exceptions.SWAMPException;
 import org.continuousassurance.swamp.session.util.Proxy;
+import edu.uiuc.ncsa.security.util.ssl.MyTrustManager;
 
 import java.io.*;
 import java.net.URI;
@@ -48,10 +51,18 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * <p>Created by Jeff Gaynor<br>
@@ -104,9 +115,13 @@ public class SWAMPHttpClient implements Serializable {
             return f;
         }
         
+        public boolean hasKeyStore() {
+            return getSSLConfiguration().getKeystore() != null;
+        }
+        
         protected KeyStore getKeyStore() throws IOException, GeneralSecurityException {
             
-            if (getSSLConfiguration().getKeystore() == null) {
+            if (!hasKeyStore()) {
                 return null;
             }
             KeyStore keyStore = KeyStore.getInstance(getSSLConfiguration().getKeystoreType());
@@ -121,33 +136,75 @@ public class SWAMPHttpClient implements Serializable {
             return keyStore;
         }
         
-        @Override
-        public T create() {
-            // Trust own CA and all self-signed certs
+        protected KeyManagerFactory getKeyManagerFactory() throws IOException, GeneralSecurityException {
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(getSSLConfiguration().getKeyManagerFactory());
+            keyManagerFactory.init(getKeyStore(), getSSLConfiguration().getKeystorePasswordChars());
+            return keyManagerFactory;
+        }
+
+        protected KeyManager[] getKeyManagers() throws IOException, GeneralSecurityException {
+            if (!hasKeyStore() || getKeyManagerFactory() == null) {
+                return null;
+            }
+            return getKeyManagerFactory().getKeyManagers();
+        }
+
+        protected SSLContext getSSLContext() {
             SSLContext sslcontext = null;
             try {
-                if (getSSLConfiguration().getKeystore() == null) {
-                    SSLContextBuilder  ssl_context_builder  = SSLContextBuilder.create();
-                    ssl_context_builder.loadKeyMaterial(getKeyStore(), getSSLConfiguration().getKeystorePasswordChars());
-                    sslcontext = ssl_context_builder.build();
-                }else {
-                    sslcontext = SSLContextBuilder.create().build();
-                }
-                         
-            } catch (IOException | GeneralSecurityException e1) {
+                sslcontext = SSLContextBuilder.create().build();
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
                 // TODO Auto-generated catch block
-                e1.printStackTrace();
-            } 
+                e.printStackTrace();
+                return null;
+            }
             
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                    sslcontext,
-                    new String[] { getSSLConfiguration().getTlsVersion() },
-                    null,
-                    SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            MyTrustManager tm = new MyTrustManager(null, getSSLConfiguration().getTrustrootPath());
+            tm.setHost(host); //varies per request.
+            X509TrustManagerFacade tmf = new X509TrustManagerFacade();
+            tmf.add(tm);
 
+            TrustManager[] trustAllCerts = new X509TrustManager[]{tmf};
+            if (hasKeyStore()) {
+                // if it has a keystore, get a trust manager and use it.
+                TrustManagerFactory tmfactory;
+                try {
+                    tmfactory = TrustManagerFactory.getInstance(getSSLConfiguration().getKeyManagerFactory());
+                    tmfactory.init(getKeyStore());
+                    for (TrustManager tm0 : tmfactory.getTrustManagers()) {
+                        if (tm0 instanceof X509TrustManager) {
+                            tmf.add((X509TrustManager) tm0);
+                        }
+                    }
+                } catch (IOException | GeneralSecurityException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                sslcontext.init(getKeyManagers(), trustAllCerts, new java.security.SecureRandom());
+            } catch (IOException | GeneralSecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            return sslcontext;
+        }
+        
+        //@Override
+        public T createNew() {
+            // Trust own CA and all self-signed certs
+            
             if (proxy.isConfigured()) {
+                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                        getSSLContext(),
+                        new String[] { getSSLConfiguration().getTlsVersion() },
+                        null,
+                        SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            
                 HttpHost http_proxy = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme());
-                HttpClient http_client = null;
+                HttpClientBuilder http_client_builder = HttpClientBuilder.create().setSSLSocketFactory(sslsf).setProxy(http_proxy);
                 
                 if (proxy.getUsername() != null && proxy.getPassword() != null) {
                     CredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -155,11 +212,9 @@ public class SWAMPHttpClient implements Serializable {
                             new AuthScope(proxy.getHost(), proxy.getPort()),
                             new UsernamePasswordCredentials(proxy.getUsername(), proxy.getPassword()));
                     
-                    http_client = HttpClientBuilder.create().setSSLSocketFactory(sslsf).setDefaultCredentialsProvider(credsProvider).setProxy(http_proxy).build();
-                }else {
-                    http_client = HttpClientBuilder.create().setSSLSocketFactory(sslsf).setProxy(http_proxy).build();
+                    http_client_builder = http_client_builder.setDefaultCredentialsProvider(credsProvider);
                 }
-                return (T)http_client;
+                return (T)http_client_builder.build();
             }else {
                 try {
                     return (T) getF().getClient(host); // have to have for SSL resolution.
@@ -167,6 +222,15 @@ public class SWAMPHttpClient implements Serializable {
                     throw new GeneralException("Error getting https-aware client");
                 } 
             }
+        }
+        
+        @Override
+        public T create() {
+            try {
+                return (T) getF().getClient(host); // have to have for SSL resolution.
+            } catch (IOException e) {
+                throw new GeneralException("Error getting https-aware client");
+            } 
         }
 
         @Override

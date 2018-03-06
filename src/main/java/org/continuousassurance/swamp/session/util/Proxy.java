@@ -86,5 +86,17 @@ public class Proxy implements Serializable{
 		this.configured = configured;
 	}
 
-    
+    public String toString() {
+        if (isConfigured()) {
+            return String.format("%s://%s:%s@%s:%d", 
+                    getScheme(),
+                    getUsername(),
+                    "*****", //getPassword(),
+                    getHost(),
+                    getPort());
+        }else {
+            return "";
+        }
+        
+    }
 }

@@ -175,7 +175,6 @@ public class SWAMPConfigurationLoader<T extends SWAMPServiceEnvironment> extends
         Proxy proxy = new Proxy();
         proxy.setConfigured(false);
         return getWebServiceURL(serverURL, sslConfiguration, proxy);
-
     }
 
 

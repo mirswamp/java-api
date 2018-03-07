@@ -80,15 +80,9 @@ public class SWAMPHttpClient implements Serializable {
         }
     }
 
-    /*
-        public Proxy getProxy(){
-            get
-        }
-    */
     protected SSLConfiguration getSSLConfiguration() {
         return sslConfiguration;
     }
-    
     
     public class MyPool<T extends HttpClient> extends Pool<T> implements Serializable {
         public MyPool() {

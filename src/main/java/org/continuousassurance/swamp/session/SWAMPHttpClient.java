@@ -44,8 +44,9 @@ import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -102,114 +103,57 @@ public class SWAMPHttpClient implements Serializable {
             return f;
         }
         
-        public boolean hasKeyStore() {
-            return getSSLConfiguration().getKeystore() != null;
-        }
-        
-        protected KeyStore getKeyStore() throws IOException, GeneralSecurityException {
-            
-            if (!hasKeyStore()) {
-                return null;
-            }
-            KeyStore keyStore = KeyStore.getInstance(getSSLConfiguration().getKeystoreType());
-            File keystoreFile = new File(getSSLConfiguration().getKeystore());
-            if (!keystoreFile.exists()) {
-                throw new FileNotFoundException("Error: the keystore file \"" + keystoreFile + "\" does not exist");
-            }
-            FileInputStream fis = new FileInputStream(keystoreFile);
-            keyStore.load(fis, getSSLConfiguration().getKeystorePasswordChars());
-            fis.close();
-            
-            return keyStore;
-        }
-        
-        protected KeyManagerFactory getKeyManagerFactory() throws IOException, GeneralSecurityException {
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(getSSLConfiguration().getKeyManagerFactory());
-            keyManagerFactory.init(getKeyStore(), getSSLConfiguration().getKeystorePasswordChars());
-            return keyManagerFactory;
-        }
-
-        protected KeyManager[] getKeyManagers() throws IOException, GeneralSecurityException {
-            if (!hasKeyStore() || getKeyManagerFactory() == null) {
-                return null;
-            }
-            return getKeyManagerFactory().getKeyManagers();
-        }
 
         protected SSLContext getSSLContext() {
-            SSLContext sslcontext = null;
-            try {
-                sslcontext = SSLContextBuilder.create().build();
-            } catch (KeyManagementException | NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return null;
-            }
+            SSLContextBuilder ssl_context_builder  = SSLContextBuilder.create();
+            ssl_context_builder.setSecureRandom(new java.security.SecureRandom());
             
-            MyTrustManager tm = new MyTrustManager(null, getSSLConfiguration().getTrustrootPath());
-            tm.setHost(host); //varies per request.
-            X509TrustManagerFacade tmf = new X509TrustManagerFacade();
-            tmf.add(tm);
-
-            TrustManager[] trustAllCerts = new X509TrustManager[]{tmf};
-            if (hasKeyStore()) {
-                // if it has a keystore, get a trust manager and use it.
-                TrustManagerFactory tmfactory;
+            if (getSSLConfiguration().getKeystore() != null) {
                 try {
-                    tmfactory = TrustManagerFactory.getInstance(getSSLConfiguration().getKeyManagerFactory());
-                    tmfactory.init(getKeyStore());
-                    for (TrustManager tm0 : tmfactory.getTrustManagers()) {
-                        if (tm0 instanceof X509TrustManager) {
-                            tmf.add((X509TrustManager) tm0);
-                        }
-                    }
-                } catch (IOException | GeneralSecurityException e) {
+                    ssl_context_builder.loadTrustMaterial(new File (getSSLConfiguration().getKeystore()), 
+                            getSSLConfiguration().getKeystorePasswordChars());
+                } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                     return null;
                 }
             }
-
+            
             try {
-                sslcontext.init(getKeyManagers(), trustAllCerts, new java.security.SecureRandom());
-            } catch (IOException | GeneralSecurityException e) {
+                return ssl_context_builder.build();
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
                 return null;
             }
-
-            return sslcontext;
         }
         
         //@Override
         public T create() {
+
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                    getSSLContext(),
+                    new String[] { getSSLConfiguration().getTlsVersion() },
+                    null,
+                    SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+
+            HttpClientBuilder http_client_builder = HttpClientBuilder.create().setSSLSocketFactory(sslsf);
             
             if (proxy.isConfigured()) {
-                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                        getSSLContext(),
-                        new String[] { getSSLConfiguration().getTlsVersion() },
-                        null,
-                        SSLConnectionSocketFactory.getDefaultHostnameVerifier());
-            
-                HttpHost http_proxy = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme());
-                HttpClientBuilder http_client_builder = HttpClientBuilder.create().setSSLSocketFactory(sslsf).setProxy(http_proxy);
-                
+
+                http_client_builder.setProxy(new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme()));
+
                 if (proxy.getUsername() != null && proxy.getPassword() != null) {
                     CredentialsProvider credsProvider = new BasicCredentialsProvider();
                     credsProvider.setCredentials(
                             new AuthScope(proxy.getHost(), proxy.getPort()),
                             new UsernamePasswordCredentials(proxy.getUsername(), proxy.getPassword()));
-                    
+
                     http_client_builder = http_client_builder.setDefaultCredentialsProvider(credsProvider);
                 }
-                return (T)http_client_builder.build();
-            }else {
-                try {
-                    return (T) getF().getClient(host); // have to have for SSL resolution.
-                } catch (IOException e) {
-                    throw new GeneralException("Error getting https-aware client");
-                } 
             }
+            return (T)http_client_builder.build();
+
         }
         
         //@Override
@@ -253,7 +197,6 @@ public class SWAMPHttpClient implements Serializable {
         this.sslConfiguration = sslConfiguration;
         if(proxy == null){
         		proxy = new Proxy();
-            //proxy.configured = false;
         }else {
             this.proxy = proxy;
         }

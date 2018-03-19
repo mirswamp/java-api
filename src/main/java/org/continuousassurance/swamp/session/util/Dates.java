@@ -2,8 +2,11 @@ package org.continuousassurance.swamp.session.util;
 
 import net.sf.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * At this point, we need a utility to convert to and from SWAMP dates, which are in no standard format.
@@ -17,6 +20,7 @@ public class Dates {
     public static SimpleDateFormat getFormatter() {
         if (formatter == null) {
             formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         }
         return formatter;
     }

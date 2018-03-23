@@ -112,6 +112,28 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
         return result;
     }
 
+    public AssessmentRun create(Project project, PackageVersion pkg_ver, 
+            PlatformVersion platform_version, ToolVersion tool_version) {
+        String url = createURL("assessment_runs");
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("project_uuid", project.getUUIDString());
+        parameters.put("package_version_uuid", pkg_ver.getUUIDString());
+        parameters.put(PackageHandler.PACKAGE_UUID_KEY, pkg_ver.getPackageThing().getUUIDString());
+        //parameters.put(PLATFORM_UUID_KEY, platform_version.getUUIDString());
+        parameters.put(PlatformVersion.PLATFORM_UUID_KEY, platform_version.getPlatform().getUUIDString());
+        parameters.put(PlatformVersion.PLATFORM_VERSION_UUID_KEY, platform_version.getUUIDString());
+        parameters.put(ToolHandler.TOOL_UUID_KEY, tool_version.getTool().getUUIDString()); 
+        parameters.put(TOOL_VERSION_UUID, tool_version.getUUIDString());
+        MyResponse myResponse = getClient().rawPost(url, parameters);
+        AssessmentRun result = fromJSON(myResponse.json);
+        result.setProject(project);
+        result.setPkg(pkg_ver.getPackageThing());
+        result.setPlatform(platform_version.getPlatform());
+        result.setPlatformVersion(platform_version);
+        result.setTool(tool_version.getTool());
+        return result;
+    }
+
     public T get(Identifier identifier) {
         String url = createURL("assessment_runs/" + SWAMPIdentifiers.fromIdentifier(identifier));
         MyResponse mr = getClient().rawGet(url, null);
@@ -164,12 +186,12 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
                 PackageHandler.PACKAGE_UUID_KEY, PACKAGE_VERSION_UUID, ToolHandler.TOOL_UUID_KEY, TOOL_VERSION_UUID,
                 PLATFORM_VERSION_UUID, PlatformHandler.PLATFORM_UUID_KEY};
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
-        
+
         String[] nAttrib = {"package_name", "package_version_string", 
-        		"tool_name", "tool_version_string", 
-        		"platform_name", "platform_version_string"};
+                "tool_name", "tool_version_string", 
+                "platform_name", "platform_version_string"};
         setAttributes(map, nAttrib, json, DATA_TYPE_STRING);
-        
+
         a.setConversionMap(map);
         return a;
     }
@@ -178,15 +200,15 @@ public class AssessmentRunHandler<T extends AssessmentRun> extends AbstractHandl
     public String getURL() {
         return createURL("assessment_runs");
     }
-    
+
     public boolean delete(AssessmentRun arun) {
         String url = createURL("assessment_runs/" + arun.getIdentifierString()); 
         MyResponse myResponse = getClient().delete(url);
         AssessmentRun result = fromJSON(myResponse.json);
         if (result != null) {
-        		return true;
+            return true;
         }else{
-        		return false;
+            return false;
         }
     }
 }

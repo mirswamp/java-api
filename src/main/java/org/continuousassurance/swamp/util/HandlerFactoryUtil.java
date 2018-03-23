@@ -128,7 +128,7 @@ public class HandlerFactoryUtil {
                                                       SSLConfiguration sslConfiguration,
                                                       Proxy proxy) {
         Session rwsSession = realLogon(rwsServer, hostHeader, originHeader, refererHeader, username, password, sslConfiguration, proxy);
-        Session csaSession = realLogon(csaServer, hostHeader, originHeader, refererHeader, username, password, sslConfiguration,proxy);
+        Session csaSession = realLogon(csaServer, hostHeader, originHeader, refererHeader, username, password, sslConfiguration, proxy);
 
         HandlerFactory hf = new HandlerFactory(rwsSession, csaSession);
         setHandlerFactory(hf);

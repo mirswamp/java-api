@@ -35,7 +35,7 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
     public static final String TOOL_VERSION = "version_string";
     public static final String PLATFORM_NAME = "name";
     public static final String PLATFORM_VERSION = "version_string";
-
+    public static final String CREATE_DATE = "create_date";
     
     public AssessmentRecordHandler(Session session) {
         super(session);
@@ -108,6 +108,7 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
         
         setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
         setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
+        setAttributes(map, new String[] {CREATE_DATE}, json, DATA_TYPE_DATE);
 
         JSONObject pkg_info = json.getJSONObject("package");
         map.put("package_name", pkg_info.get(PACKAGE_NAME));
@@ -117,19 +118,20 @@ public class AssessmentRecordHandler<T extends AssessmentRecord> extends Abstrac
                 pkg_info, DATA_TYPE_IDENTIFIER);
                 
         JSONObject tool_info = json.getJSONObject("tool");
-        map.put("tool_name", pkg_info.get(TOOL_NAME));
-        map.put("tool_version", pkg_info.get(TOOL_VERSION));
+        map.put("tool_name", tool_info.get(TOOL_NAME));
+        map.put("tool_version", tool_info.get(TOOL_VERSION));
         
         setAttributes(map, new String[] {TOOL_UUID_KEY, TOOL_VERSION_UUID},
                 tool_info, DATA_TYPE_IDENTIFIER);
 
         JSONObject plat_info = json.getJSONObject("platform");
-        map.put("platform_name", pkg_info.get(PLATFORM_NAME));
-        map.put("platform_version", pkg_info.get(PLATFORM_VERSION));
+        map.put("platform_name", plat_info.get(PLATFORM_NAME));
+        map.put("platform_version", plat_info.get(PLATFORM_VERSION));
         
         setAttributes(map, new String[] {PLATFORM_UUID_KEY, PLATFORM_VERSION_UUID},
                 plat_info, DATA_TYPE_IDENTIFIER);
-
+        
+        
         if (map.getString(STATUS_STRING).equals("Finished")) {
             try {
                 map.put(WEAKNESS_COUNT, json.getInt("weakness_cnt"));

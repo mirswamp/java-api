@@ -22,6 +22,8 @@ public class ToolVersion extends SwampThing{
     public static final String TOOL_ARGUMENTS_KEY = "tool_arguments";
     public static final String TOOL_DIRECTORY_KEY = "tool_directory";
 
+    Tool tool;
+    
     public ToolVersion(Session session) {
         super(session);
     }
@@ -38,12 +40,20 @@ public class ToolVersion extends SwampThing{
     protected SwampThing getNewInstance() {
         return new ToolVersion(getSession());
     }
-    
+
     public String getVersion() {
-    	return getConversionMap().getString(VERSION_STRING_KEY);
+        return getConversionMap().getString(VERSION_STRING_KEY);
+    }
+
+    public Date getReleaseDate() {
+        return getConversionMap().getDate(RELEASE_DATE_KEY);
     }
     
-    public Date getReleaseDate() {
-    	return getConversionMap().getDate(RELEASE_DATE_KEY);
+    public void setTool(Tool tool) {
+        this.tool = tool;
+    }
+    
+    public Tool getTool() {
+        return this.tool;
     }
 }

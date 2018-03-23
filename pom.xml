@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.continuousassurance.swamp</groupId>
   <artifactId>java-api</artifactId>
-  <version>1.5</version>
+  <version>1.6</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <runSuite>**/SWAMPTestSuite.class</runSuite>

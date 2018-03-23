@@ -26,19 +26,19 @@ public class ToolVersionHandler<T extends ToolVersion> extends AbstractHandler<T
 
     @Override
     protected T fromJSON(JSONObject json) {
-    	T tv = (T) new ToolVersion(getSession());
-    	ConversionMapImpl map = new ConversionMapImpl();
-    	String[] sAttrib = {T.NOTES_KEY, T.VERSION_STRING_KEY, T.TOOL_PATH_KEY,
-    			T.TOOL_EXECUTABLE_KEY, T.TOOL_ARGUMENTS_KEY, T.TOOL_DIRECTORY_KEY};
-    	String[] uAttrib = {T.TOOL_UUID_KEY, T.TOOL_VERSION_UUID_KEY};
-    	String[] dAttrib = {T.RELEASE_DATE_KEY, T.RETIRE_DATE_KEY};
-    	
-    	setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
-    	setAttributes(map, dAttrib, json, DATA_TYPE_DATE);
-    	setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
+        T tv = (T) new ToolVersion(getSession());
+        ConversionMapImpl map = new ConversionMapImpl();
+        String[] sAttrib = {T.NOTES_KEY, T.VERSION_STRING_KEY, T.TOOL_PATH_KEY,
+                T.TOOL_EXECUTABLE_KEY, T.TOOL_ARGUMENTS_KEY, T.TOOL_DIRECTORY_KEY};
+        String[] uAttrib = {T.TOOL_UUID_KEY, T.TOOL_VERSION_UUID_KEY};
+        String[] dAttrib = {T.RELEASE_DATE_KEY, T.RETIRE_DATE_KEY};
 
-    	tv.setConversionMap(map);
-    	return tv;
+        setAttributes(map, sAttrib, json, DATA_TYPE_STRING);
+        setAttributes(map, dAttrib, json, DATA_TYPE_DATE);
+        setAttributes(map, uAttrib, json, DATA_TYPE_IDENTIFIER);
+
+        tv.setConversionMap(map);
+        return tv;
     }
 
     @Override
@@ -66,11 +66,13 @@ public class ToolVersionHandler<T extends ToolVersion> extends AbstractHandler<T
         }
         for (int i = 0; i < mr.jsonArray.size(); i++) {
             JSONObject json = mr.jsonArray.getJSONObject(i);
-            tools.add(fromJSON(json));
+            T t = fromJSON(json);
+            t.setTool(tool);
+            tools.add(t);
         }
         return tools;
     }
-    
+
     /**
      * Return all versions of the given tool.
      *
@@ -88,7 +90,9 @@ public class ToolVersionHandler<T extends ToolVersion> extends AbstractHandler<T
         }
         for (int i = 0; i < mr.jsonArray.size(); i++) {
             JSONObject json = mr.jsonArray.getJSONObject(i);
-            tools.add(fromJSON(json));
+            T t = fromJSON(json);
+            t.setTool(tool);
+            tools.add(t);
         }
         return tools;
     }

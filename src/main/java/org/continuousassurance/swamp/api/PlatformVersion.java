@@ -85,98 +85,193 @@ public class PlatformVersion extends SwampThing {
 	}
 	
 	public void standardize() {
-		
-		switch(getFullName()) {
-		case ("Android Android on Ubuntu 12.04 64-bit"):
-			standardize("Android-Ubuntu", "12.04", Bits.BITS_64);
-		break;
+		/*
+		 * This provides backward compatability for all the
+		 * "old" OS names in the SWAMP before we addressed
+		 * this issue and had the swamp start using real
+		 * platform names.
+		 * It remains so old SWAMPs still work with the plugins.
+		 * This could probably switch to using Bolo's new
+		 * automagic code to do the translation ... the only
+		 * thing needed is to notice 'Linux' in the string,
+		 * The duplicate xxx-bit stuff, and the need
+		 * to turn MAJOR.MINOR into MAJOR for everything BUT ubuntu
+		 */
+		String fullName = getFullName();
+		switch(fullName) {
 		case ("CentOS Linux 5 32-bit 5.11 32-bit"):
-		case ("CentOS 5 32-bit"):
 			standardize("CentOS", "5", Bits.BITS_32);
 		break;
 		case ("CentOS Linux 5 64-bit 5.11 64-bit"):
-		case ("CentOS 5 64-bit"):
 			standardize("CentOS", "5", Bits.BITS_64);
 		break;
 		case ("CentOS Linux 6 32-bit 6.7 32-bit"):
-		case ("CentOS 6 32-bit"):
 			standardize("CentOS", "6", Bits.BITS_32);
 		break;
 		case ("CentOS Linux 6 64-bit 6.7 64-bit"):
-		case ("CentOS 6 64-bit"):
 			standardize("CentOS", "6", Bits.BITS_64);
 		break;
+		case ("CentOS Linux 7 64-bit 7.4 64-bit"):
+			standardize("CentOS", "7", Bits.BITS_64);
+		break;
+		case ("CentOS Linux 7 32-bit 7.4 32-bit"):
+			standardize("CentOS", "7", Bits.BITS_32);
+		break;
 		case ("Debian Linux 7.11 64-bit"):
-		case ("Debian 7 64-bit"):
 			standardize("Debian", "7", Bits.BITS_64);
 		break;
 		case ("Debian Linux 8.6 64-bit"):
-		case ("Debian 8 64-bit"):
 			standardize("Debian", "8", Bits.BITS_64);
 		break;
+		case ("Debian Linux 9.3 64-bit"):
+			standardize("Debian", "9", Bits.BITS_64);
+		break;
 		case ("Fedora Linux 18 64-bit"):
-		case ("Fedora 18 64-bit"):
 			standardize("Fedora", "18", Bits.BITS_64);
 		break;
 		case ("Fedora Linux 19 64-bit"):
-		case ("Fedora 19 64-bit"):
 			standardize("Fedora", "19", Bits.BITS_64);
 		break;
 		case ("Fedora Linux 20 64-bit"):
-		case ("Fedora 20 64-bit"):
 			standardize("Fedora", "20", Bits.BITS_64);
 		break;
 		case ("Fedora Linux 21 64-bit"):
-		case ("Fedora 21 64-bit"):
 			standardize("Fedora", "21", Bits.BITS_64);
 		break;
 		case ("Fedora Linux 22 64-bit"):
-		case ("Fedora 22 64-bit"):
 			standardize("Fedora", "22", Bits.BITS_64);
 		break;
 		case ("Fedora Linux 23 64-bit"):
-		case ("Fedora 23 64-bit"):
 			standardize("Fedora", "23", Bits.BITS_64);
 		break;
 		case ("Fedora Linux 24 64-bit"):
-		case ("Fedora 24 64-bit"):
 			standardize("Fedora", "24", Bits.BITS_64);
 		break;
+		case ("Fedora Linux 25 64-bit"):
+			standardize("Fedora", "25", Bits.BITS_64);
+		break;
+		case ("Redhat Enterprise Linux 5 32-bit 5.11 32-bit"):
+			standardize("CentOS", "5", Bits.BITS_32);
+		break;
+		case ("Redhat Enterprise Linux 5 64-bit 5.11 64-bit"):
+			standardize("CentOS", "5", Bits.BITS_64);
+		break;
+		case ("Redhat Enterprise Linux 6 32-bit 6.7 32-bit"):
+			standardize("CentOS", "6", Bits.BITS_32);
+		break;
+		case ("Redhat Enterprise Linux 6 64-bit 6.7 64-bit"):
+			standardize("CentOS", "6", Bits.BITS_64);
+		break;
+		case ("Redhat Enterprise Linux 7 64-bit 7.4 64-bit"):
+			standardize("CentOS", "7", Bits.BITS_64);
+		break;
 		case ("Scientific Linux 5 32-bit 5.11 32-bit"):
-		case ("Scientific 5 32-bit"):
 			standardize("Scientific", "5", Bits.BITS_32);
 		break;
 		case ("Scientific Linux 5 64-bit 5.11 64-bit"):
-		case ("Scientific 5 64-bit"):
 			standardize("Scientific", "5", Bits.BITS_64);
 		break;
 		case ("Scientific Linux 6 32-bit 6.7 32-bit"):
-		case ("Scientific 6 32-bit"):
 			standardize("Scientific", "6", Bits.BITS_32);
 		break;
 		case ("Scientific Linux 6 64-bit 6.7 64-bit"):
-		case ("Scientific 6 64-bit"):
 			standardize("Scientific", "6", Bits.BITS_64);
 		break;
+		case ("Scientific Linux 7 64-bit 7.4 64-bit"):
+			standardize("Scientific", "7", Bits.BITS_64);
+		break;
 		case ("Ubuntu Linux 10.04 LTS 64-bit Lucid Lynx"):
-		case ("Ubuntu 10.04 64-bit"):
 			standardize("Ubuntu", "10.04", Bits.BITS_64);
 		break;
 		case ("Ubuntu Linux 12.04 LTS 64-bit Precise Pangolin"):
-		case ("Ubuntu 12.04 64-bit"):
 			standardize("Ubuntu", "12.04", Bits.BITS_64);
 		break;
 		case ("Ubuntu Linux 14.04 LTS 64-bit Trusty Tahr"):
-		case ("Ubuntu 14.04 64-bit"):
 			standardize("Ubuntu", "14.04", Bits.BITS_64);
 		break;
 		case ("Ubuntu Linux 16.04 LTS 64-bit Xenial Xerus"):
-		case ("Ubuntu 16.04 64-bit"):
 			standardize("Ubuntu", "16.04", Bits.BITS_64);
 		break;
 		default:
-			System.out.println("Unknown " + getFullName());
-			standardize(getFullName(), "", Bits.BITS_64);
+			/*
+			 * decode the parts so any new OSes automatically
+			 * work.   THe prior code here broke any asesssment
+			 * when a new os was added to a swamp.
+			 *
+			 * XXX could expand parsing to allow
+			 * NaME [Linux] Major [63][42]-bit
+			 *
+			 * XXX code doesn't deal with
+			 * Android on Android on Redhat Enterprise LInux ...
+			 * But we should be calling it RHEL anyway; easy
+			 * enough to do something about that later.
+			 */
+			String[] av = fullName.trim().split("\\s+");
+			int ac = av.length;
+			boolean errors = false;
+			Bits bits = Bits.BITS_64;	/* bad class design */
+			if (ac == 5) {
+				/*
+				 * this code is untested, but is usable
+				 * incase we go back to rhel as a platform
+				 * AND have multi-word name instead of RHEL.
+				 */ 
+				/* Redhat Enterprise Linux OSver OSbits
+				    0      1         2     3     4 */
+				boolean rhel = av[0].equals("Redhat")
+				    && av[1].equals("Enterprise")
+				    && av[2].equals("Linux");
+				if (rhel) {
+					/* make it look like a real os */
+					av[0] = "RHEL";
+					av[1] = av[3];
+					av[2] = av[4];
+					ac = 3;
+					/* av.length = 3 would be OK, but
+					 * not needed because of ac
+					 */
+				}
+				/* else error propagates correctly */
+			}
+			else if (ac == 6) {
+				/* Android Android on OSname OSver OSbits
+				    0      1       2  3      4     5 */
+				boolean android = av[0].equals("Android")
+				    && av[1].equals("Android")
+				    && av[2].equals("on");
+				if (android) {
+					av[0] = "Android" + "-" + av[3];
+					av[1] = av[4];
+					av[2] = av[5];
+					ac = 3;
+				}
+				/* else error propagates correctly */
+			}
+			if (ac == 3) {
+				String sbits = av[2];
+				/* enum should have a converter */
+				if (sbits.equals("32-bit"))
+					bits = Bits.BITS_32;
+				else if (sbits.equals("64-bit"))
+					bits = Bits.BITS_64;
+				else {
+					System.err.println("Unknown bits format: " + sbits);
+					errors = true;
+				}
+			}
+			else {
+				System.err.print("Unknown OS format ac=");
+				System.err.println(ac);
+				errors = true;
+			}
+			if (!errors) {
+				standardize(av[0], av[1], bits);
+			}
+			else {
+				/* Use stderr to try not break stdout parsing */
+				System.err.println("Unknown " + fullName);
+				standardize(fullName, "", Bits.BITS_64);
+			}
 			break;
 		}
 	}

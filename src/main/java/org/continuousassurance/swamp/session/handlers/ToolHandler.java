@@ -55,7 +55,10 @@ public class ToolHandler<T extends Tool> extends AbstractHandler<T> {
      "platform_names":["Scientific Linux 5 64-bit","CentOS Linux
       6 64-bit","Ubuntu Linux","CentOS Linux 5 32-bit","Android","Fedora Linux","Scientific Linux 6 32-bit"
      ,"CentOS Linux 5 64-bit","Scientific Linux 5 32-bit","Red Hat Enterprise Linux 6 32-bit","Scientific
-      Linux 6 64-bit","Debian Linux","CentOS Linux 6 32-bit","Red Hat Enterprise Linux 6 64-bit"],
+      Linux 6 64-bit","Debian Linux","CentOS Linux 6 32-bit","Red Hat Enterprise Linux 6 64-bit",
+      "CentOS Linux 7 64-bit", "CentOS Linux 7 32-bit",
+      "Scientific Linux 7 64 bit",
+      "Red Hat Enterprise Linux 7 64 bit"],
       "viewer_names"
      :["Code Dx","Native"],
      "is_owned":false,

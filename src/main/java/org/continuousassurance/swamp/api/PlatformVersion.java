@@ -296,4 +296,16 @@ public class PlatformVersion extends SwampThing {
 		return getDisplayString();
 	}
 
+	public static String getDisplayString(String platform_name, String platform_version_string) {
+	    if(platform_name.equalsIgnoreCase("android")) {
+	        return "android-ubuntu-12.04-64";
+	    }else {
+	        String str = platform_name + "-" + platform_version_string;
+	        str = str.toLowerCase().replace(' ', '-');
+	        if (str.endsWith("-bit")) {
+	            str = str.substring(0, str.lastIndexOf("-bit"));
+	        }
+	        return str;
+	    }
+	}
 }

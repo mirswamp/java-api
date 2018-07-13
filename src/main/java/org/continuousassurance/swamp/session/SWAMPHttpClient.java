@@ -156,6 +156,7 @@ public class SWAMPHttpClient implements Serializable {
 
         }
         
+        /*
         //@Override
         public T createOld() {
             try {
@@ -163,7 +164,7 @@ public class SWAMPHttpClient implements Serializable {
             } catch (IOException e) {
                 throw new GeneralException("Error getting https-aware client");
             } 
-        }
+        }*/
 
         @Override
         public void destroy(HttpClient httpClient) {
